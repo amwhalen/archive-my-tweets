@@ -1,8 +1,8 @@
 <?php
 
-require_once('config.php');
-require_once('classes/archivemytweets.php');
-require_once('classes/tweet.php');
-require_once('classes/twitter.php');
+if ( ! include('config.php') ) { die('Missing config.php file.'); }
+include('classes/archivemytweets.php');
+include('classes/tweet.php');
+include('classes/twitter.php');
 
 ?>

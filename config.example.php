@@ -1,7 +1,7 @@
 <?php
 
 // The URL for your installation of archive-my-tweets
-define('BASE_URL', 'h'); // e.g. http://amwhalen.com/twitter/ (start with http:// and have a slash at the end)
+define('BASE_URL', ''); // e.g. http://amwhalen.com/twitter/ (start with http:// and have a slash at the end)
 
 // twitter credentials
 define('TWITTER_USERNAME', ''); // e.g. awhalen
