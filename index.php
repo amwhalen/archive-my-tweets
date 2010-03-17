@@ -4,46 +4,54 @@ require_once('includes.php');
 
 // create twitter archive object
 $tb = new ArchiveMyTweets(TWITTER_USERNAME, TWITTER_PASSWORD, DB_NAME, DB_TABLE_PREFIX, DB_HOST, DB_USERNAME, DB_PASSWORD);
-if ($tb->db_link === FALSE) { die('Could not establish a connection to the database.'); }
+if ($tb->db_link === FALSE) { die('Could not establish a connection to the database: ' . mysql_error() . "\n"); }
 
-// get number of tweets
-$total_tweets = $tb->get_total_tweets();
-$max_tweets = $tb->get_most_tweets_in_a_month();
+if ($tb->is_installed()) {
 
-// the big switch. this decides what to show on the page.
-if (isset($_GET['id'])) {
+	// get number of tweets
+	$total_tweets = $tb->get_total_tweets();
+	$max_tweets = $tb->get_most_tweets_in_a_month();
+
+	// the big switch. this decides what to show on the page.
+	if (isset($_GET['id'])) {
 	
-	// show a single tweet
-	$single_tweet = true;
-	$tweets = $tb->get_tweet($_GET['id']);
-	$header = '';
+		// show a single tweet
+		$single_tweet = true;
+		$tweets = $tb->get_tweet($_GET['id']);
+		$header = '';
 	
-} else if (isset($_GET['q'])) {
+	} else if (isset($_GET['q'])) {
 	
-	// show search results
-	$search = true;
-	$tweets = $tb->get_search_results($_GET['q']);
-	if ($tweets !== false) {
-		$header = 'Search results ('.mysql_num_rows($tweets).') for '.$_GET['q'];
+		// show search results
+		$search = true;
+		$tweets = $tb->get_search_results($_GET['q']);
+		if ($tweets !== false) {
+			$header = 'Search results ('.mysql_num_rows($tweets).') for '.$_GET['q'];
+		} else {
+			$header = 'No results for '.$_GET['q'];
+		}
+	
+	} else if (isset($_GET['year']) && isset($_GET['month'])) {
+	
+		// show tweets from a specific month
+		$monthly_archive = true;
+		$archive_year = $_GET['year'];
+		$archive_month = $_GET['month'];
+		$tweets = $tb->get_tweets_by_month($archive_year, $archive_month);
+		$header = 'Tweets from '.date('F Y', strtotime($archive_year.'-'.$archive_month.'-01'));
+	
 	} else {
-		$header = 'No results for '.$_GET['q'];
+	
+		// default view: show all the tweets
+		$all_tweets = true;
+		$tweets = $tb->get_tweets();
+		$header = '';
+	
 	}
-	
-} else if (isset($_GET['year']) && isset($_GET['month'])) {
-	
-	// show tweets from a specific month
-	$monthly_archive = true;
-	$archive_year = $_GET['year'];
-	$archive_month = $_GET['month'];
-	$tweets = $tb->get_tweets_by_month($archive_year, $archive_month);
-	$header = 'Tweets from '.date('F Y', strtotime($archive_year.'-'.$archive_month.'-01'));
-	
+
 } else {
 	
-	// default view: show all the tweets
-	$all_tweets = true;
-	$tweets = $tb->get_tweets();
-	$header = '';
+	die('Archive My Tweets is not yet installed. Please see the <a href="http://code.google.com/p/archive-my-tweets/">documentation</a>.');
 	
 }
 

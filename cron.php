@@ -6,7 +6,8 @@ if (isset($_GET['secret']) && $_GET['secret'] == TWITTER_CRON_SECRET) {
 
 	// create and backup
 	$tb = new ArchiveMyTweets(TWITTER_USERNAME, TWITTER_PASSWORD, DB_NAME, DB_TABLE_PREFIX, DB_HOST, DB_USERNAME, DB_PASSWORD);
-	$tb->backup();
+	$output = $tb->backup();
+	echo '<pre>' . $output . '</pre>';
 
 } else {
 	

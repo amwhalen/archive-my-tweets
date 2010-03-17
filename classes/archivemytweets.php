@@ -40,9 +40,6 @@ class ArchiveMyTweets {
 		$this->db_password = $db_pass;
 		$this->tweets_table = $this->db_prefix . 'tweets';
 		
-		// install if it's not installed yet
-		if (!$this->is_installed()) { $this->install(); }
-		
 		// sign in to Twitter
 		$this->twitter = new Twitter($this->username, $this->password);
 		
@@ -56,60 +53,82 @@ class ArchiveMyTweets {
 	 */
 	public function backup() {
 	
+		$echo_str = '';
+	
+		// install if it's not installed yet
+		if (!$this->is_installed()) {
+			$installed_ok = $this->install();
+			if ($installed_ok) {
+				$echo_str .= 'Installed the table "'.$this->tweets_table.'" in database "'.$this->db_name.'" for twitter backups.' . "\n";
+			} else {
+				$echo_str .= "There was an error while creating the database table: ".mysql_error()."\n";
+				die($echo_str);
+			}
+		}
+	
+		// variables
 		$got_results = true;
 		$page = 1;
 		$results = array();
 		$per_request = 200;
 		$latest_tweet = $this->get_latest_tweet();
 		$since_id = ($latest_tweet !== false) ? $latest_tweet->id : NULL;
+		$exception_count = 0;
 		
-		$echo_str = "Retrieving ".$per_request." tweets per page.\n";
+		// setup the output string
+		$echo_str .= "Retrieving ".$per_request." tweets per page.\n";
 		if ($since_id != NULL) {
 			$echo_str .= "Getting tweets with an id greater than ".$since_id.".\n";
 		}
 		
+		// keep going while we're getting back more tweets
 		while($got_results) {
 		
 			try {
+				
 				$result = $this->twitter->getUserTimeline(NULL, $since_id, NULL, $per_request, $page);
-			} catch (Exception $e) {
-				echo 'Exception: ' . $e->getMessage() . "<br />";
-			}
 			
-			$num_results = count($result);
-			
-			if ($num_results == 0) {
-				// because retweets are stripped out of results,
-				// we can only be sure we're on the last page if there were zero results
-				$got_results = false;
-				$echo_str .= "No tweets on page ".$page.".\n";
-			} else {
-				
-				// if it's less than the per request amount, some retweets may have been filtered out.
-				if ($num_results < $per_request) {
-					$echo_str .= "Got ".$num_results." results on page ".$page.". Retweets were probably filtered out.\n";
+				$num_results = count($result);
+
+				if ($num_results == 0) {
+					// because retweets are stripped out of results,
+					// we can only be sure we're on the last page if there were zero results
+					$got_results = false;
+					$echo_str .= "No tweets on page ".$page.".\n";
 				} else {
-					$echo_str .= "Got ".$num_results." results on page ".$page.".\n";
+
+					// if it's less than the per request amount, some retweets may have been filtered out.
+					if ($num_results < $per_request) {
+						$echo_str .= "Got ".$num_results." results on page ".$page.". Retweets were probably filtered out.\n";
+					} else {
+						$echo_str .= "Got ".$num_results." results on page ".$page.".\n";
+					}
+
+					$page++;
+
+					$results = array_merge($results, $result);
+
 				}
-				
-				$page++;
-				
-				$results = array_merge($results, $result);
-				
+			
+			} catch (Exception $e) {
+				$echo_str .= 'Exception: ' . $e->getMessage() . "\n";
+				$exception_count++;
 			}
+			
+			if ($exception_count > 5) { return $echo_str . 'Twitter is being flaky. Too many exceptions! Try again later.' . "\n"; }
 		
 		}
 		
 		$rate = $this->twitter->getRateLimitStatus();
-		
 		$timezone = (function_exists('date_default_timezone_get')) ? ' '.date_default_timezone_get() : '';
 		$plural_q = ($page != 1) ? 'queries' : 'query';
 		$plural_t = (count($results) != 1) ? 'tweets' : 'tweet';
 		
-		// add some info to the output
+		// add API info to the output
 		$echo_str .= count($results)." new ".$plural_t." over ".$page." ".$plural_q.".\n";
 		$echo_str .= "API: (".$rate['remaining_hits']."/".$rate['hourly_limit'].") API count resets at ".date("g:ia", $rate['reset_time']).$timezone.".\n";
 		
+		// finally, add the tweets to the database
 		$tweets = array();
 		foreach ($results as $t) {
 			
@@ -118,10 +137,9 @@ class ArchiveMyTweets {
 			$tweets[] = $tweet;
 									
 		}
-		
 		$this->add_tweets($tweets);
 		
-		echo '<pre>' . $echo_str . '</pre>';
+		return $echo_str;
 	
 	}
 	
@@ -358,14 +376,14 @@ class ArchiveMyTweets {
 		$sql = 'create table '.$this->tweets_table.' ( id bigint(20) unsigned not null unique, user_id bigint(20) unsigned not null, created_at datetime not null, tweet varchar(140), source varchar(255), truncated tinyint(1), favorited tinyint(1), in_reply_to_status_id bigint(20), in_reply_to_user_id bigint(20), index(source) ) ENGINE=MyISAM DEFAULT CHARSET=utf8;';
 		$result = $this->query($sql);
 	
-		echo 'Installed the table "'.$this->tweets_table.'" in database "'.$this->db_name.'" for twitter backups.' . "\n";
+		return $result;
 	
 	}
 	
 	/**
 	 * Returns true if the database table exists.
 	 */
-	private function is_installed() {
+	public function is_installed() {
 	
 		$sql = "show tables like '" . $this->tweets_table . "'";
 		$result = $this->query($sql);
