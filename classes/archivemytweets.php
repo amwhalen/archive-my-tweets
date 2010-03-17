@@ -245,8 +245,28 @@ class ArchiveMyTweets {
 	 */
 	public function get_search_results($k) {
 	
-		$sql  = 'select * from '.$this->tweets_table.' where 1 and (';
+		$sql  = 'select * from '.$this->tweets_table.' where 1 ';
 		
+		// split out the quoted items
+		// $phrases[0] is an array of full pattern matches (quotes intact)
+		// $phrases[1] is an array of strings matched by the first parenthesized subpattern, and so on. (quotes stripped)
+		// the .+? means match 1 or more characters, but don't be "greedy", i.e., match the smallest amount
+		preg_match_all("/\"(.+?)\"/", $k, $phrases);
+		$words = split(' ', preg_replace('/".+?"/', '', $k));
+		$word_list = array_merge($phrases[1], $words);
+			
+		// create the sql statement
+		$sql .= 'AND (';
+		foreach ($word_list as $word) {
+			if (strlen($word)) {
+				$word = str_replace(",", "", strtolower($word));
+				$sql .= "(tweet like '%".mysql_real_escape_string(strtolower($word))."%') or ";
+			}
+		}
+		$sql = trim($sql, " or "); // remove that dangling "or"
+		$sql .= ' )';
+		
+		/*
 		//$words = explode('"', $k);
 		$words = explode(' ', $k);
 		$or_statements = array();
@@ -254,10 +274,9 @@ class ArchiveMyTweets {
 			if (trim($w) == '') continue;
 			$or_statements[] = "(tweet like '%".mysql_real_escape_string($w)."%')";			
 		}
-		
 		$sql .= implode(' or ', $or_statements);
-		
-		$sql .= ') order by id desc';
+		*/
+		$sql .= ' order by id desc';
 		
 		$result = $this->query($sql);
 	

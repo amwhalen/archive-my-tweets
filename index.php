@@ -75,7 +75,7 @@ if ($tb->is_installed()) {
 		<div class="search">
 			<form action="<?php echo BASE_URL; ?>" method="get">
 				<p>
-					<input type="text" size="20" name="q" value="<?php echo ($search) ? $_GET['q'] : 'Search tweets'; ?>" class="input" onfocus="if(this.value=='Search tweets') {this.value='';}" onblur="if(this.value=='') {this.value='Search tweets';}" /><input type="submit" value="Go" class="go" />
+					<input type="text" size="20" name="q" value="<?php echo ($search) ? htmlentities($_GET['q']) : 'Search tweets'; ?>" class="input" onfocus="if(this.value=='Search tweets') {this.value='';}" onblur="if(this.value=='') {this.value='Search tweets';}" /><input type="submit" value="Go" class="go" />
 				</p>
 			</form>
 		</div>
