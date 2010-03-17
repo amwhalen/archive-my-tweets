@@ -110,6 +110,19 @@ class Twitter
 		if($username !== null) $this->setUsername($username);
 		if($password !== null) $this->setPassword($password);
 	}
+	
+	
+	/**
+	 * This is used in place of utf8_decode() so UTF8 character aren't stripped out.
+	 *
+	 * @param string $str 
+	 * @return string The original string.
+	 * @author awhalen
+	 */
+	private function decode($str)
+	{
+		return $str;
+	}
 
 
 	/**
@@ -296,7 +309,7 @@ class Twitter
 		// convert into array
 		$aMessage['id'] = (string) $xml->id;
 		$aMessage['created_at'] = (int) strtotime($xml->created_at);
-		$aMessage['text'] = (string) utf8_decode($xml->text);
+		$aMessage['text'] = (string) $this->decode($xml->text);
 		$aMessage['sender'] = $this->userXMLToArray($xml->sender);
 		$aMessage['recipient'] = $this->userXMLToArray($xml->recipient);
 
@@ -368,7 +381,7 @@ class Twitter
 		// convert into array
 		$aStatus['id'] = (string) $xml->id;
 		$aStatus['created_at'] = (int) strtotime($xml->created_at);
-		$aStatus['text'] = utf8_decode((string) $xml->text);
+		$aStatus['text'] = $this->decode((string) $xml->text);
 		$aStatus['source'] = (isset($xml->source)) ? (string) $xml->source : '';
 		$aStatus['user'] = $this->userXMLToArray($xml->user);
 		$aStatus['truncated'] = (isset($xml->truncated) && $xml->truncated == 'true');
@@ -395,10 +408,10 @@ class Twitter
 
 		// convert into array
 		$aUser['id'] = (string) $xml->id;
-		$aUser['name'] = utf8_decode((string) $xml->name);
-		$aUser['screen_name'] = utf8_decode((string) $xml->screen_name);
-		$aUser['description'] = utf8_decode((string) $xml->description);
-		$aUser['location'] = utf8_decode((string) $xml->location);
+		$aUser['name'] = $this->decode((string) $xml->name);
+		$aUser['screen_name'] = $this->decode((string) $xml->screen_name);
+		$aUser['description'] = $this->decode((string) $xml->description);
+		$aUser['location'] = $this->decode((string) $xml->location);
 		$aUser['url'] = (string) $xml->url;
 		$aUser['protected'] = (isset($xml->protected) && $xml->protected == 'true');
 		$aUser['followers_count'] = (int) $xml->followers_count;
@@ -407,12 +420,12 @@ class Twitter
 		// extended info?
 		if($extended)
 		{
-			if(isset($xml->profile_background_color)) $aUser['profile_background_color'] = utf8_decode((string) $xml->profile_background_color);
-			if(isset($xml->profile_text_color)) $aUser['profile_text_color'] = utf8_decode((string) $xml->profile_text_color);
-			if(isset($xml->profile_link_color)) $aUser['profile_link_color'] = utf8_decode((string) $xml->profile_link_color);
-			if(isset($xml->profile_sidebar_fill_color)) $aUser['profile_sidebar_fill_color'] = utf8_decode((string) $xml->profile_sidebar_fill_color);
-			if(isset($xml->profile_sidebar_border_color)) $aUser['profile_sidebar_border_color'] = utf8_decode((string) $xml->profile_sidebar_border_color);
-			if(isset($xml->profile_background_image_url)) $aUser['profile_background_image_url'] = utf8_decode((string) $xml->profile_background_image_url);
+			if(isset($xml->profile_background_color)) $aUser['profile_background_color'] = $this->decode((string) $xml->profile_background_color);
+			if(isset($xml->profile_text_color)) $aUser['profile_text_color'] = $this->decode((string) $xml->profile_text_color);
+			if(isset($xml->profile_link_color)) $aUser['profile_link_color'] = $this->decode((string) $xml->profile_link_color);
+			if(isset($xml->profile_sidebar_fill_color)) $aUser['profile_sidebar_fill_color'] = $this->decode((string) $xml->profile_sidebar_fill_color);
+			if(isset($xml->profile_sidebar_border_color)) $aUser['profile_sidebar_border_color'] = $this->decode((string) $xml->profile_sidebar_border_color);
+			if(isset($xml->profile_background_image_url)) $aUser['profile_background_image_url'] = $this->decode((string) $xml->profile_background_image_url);
 			if(isset($xml->profile_background_tile)) $aUser['profile_background_tile'] = (isset($xml->profile_background_tile) && $xml->profile_background_tile == 'true');
 			if(isset($xml->created_at)) $aUser['created_at'] = (int) strtotime((string) $xml->created_at);
 			if(isset($xml->following)) $aUser['following'] = (isset($xml->following) && $xml->following == 'true');
@@ -420,7 +433,7 @@ class Twitter
 			if(isset($xml->statuses_count)) $aUser['statuses_count'] = (int) $xml->statuses_count;
 			if(isset($xml->friends_count)) $aUser['friends_count'] =  (int) $xml->friends_count;
 			if(isset($xml->favourites_count)) $aUser['favourites_count'] = (int) $xml->favourites_count;
-			if(isset($xml->time_zone)) $aUser['time_zone'] = utf8_decode((string) $xml->time_zone);
+			if(isset($xml->time_zone)) $aUser['time_zone'] = $this->decode((string) $xml->time_zone);
 			if(isset($xml->utc_offset)) $aUser['utc_offset'] = (int) $xml->utc_offset;
 		}
 
@@ -1084,12 +1097,12 @@ class Twitter
 
 		$aReturn = array();
 		$aReturn['target']['id'] = (string) $xml->target->id;
-		$aReturn['target']['screen_name'] = (string) utf8_decode($xml->target->screen_name);
+		$aReturn['target']['screen_name'] = (string) $this->decode($xml->target->screen_name);
 		$aReturn['target']['following'] = (bool) ((string) $xml->target->following == 'true');
 		$aReturn['target']['followed_by'] = (bool) ((string) $xml->target->followed_by == 'true');
 
 		$aReturn['source']['id'] = (string) $xml->source->id;
-		$aReturn['source']['screen_name'] = (string) utf8_decode($xml->source->screen_name);
+		$aReturn['source']['screen_name'] = (string) $this->decode($xml->source->screen_name);
 		$aReturn['source']['following'] = (bool) ((string) $xml->source->following == 'true');
 		$aReturn['source']['followed_by'] = (bool) ((string) $xml->source->followed_by == 'true');
 		$aReturn['source']['notifications_enabled'] = (bool) ((string) $xml->source->notifications_enabled == 'true');
