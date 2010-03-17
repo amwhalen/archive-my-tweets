@@ -92,23 +92,21 @@ if ($tb->is_installed()) {
 				$t = new Tweet();
 				$t->load($row);
 				
-				$classes = array();
-				$classes[] = ($t->favorited != 0) ? 'favorited' : '';
-				$classes[] = ($t->in_reply_to_status_id != 0) ? 'reply' : '';
-				$classes[] = ($t->truncated != 0) ? 'truncated' : '';
-				$class = ' '.implode(' ', $classes);
+				$classes = array('tweet');
+				if ($t->favorited != 0) $classes[] = 'favorited';
+				if ($t->in_reply_to_status_id != 0) $classes[] = 'reply';
+				if ($t->truncated != 0) $classes[] = 'truncated';
+				$class = implode(' ', $classes);
 			
 		?>
 		
-		<div class="tweet<?php echo $class; ?>">
+		<div class="<?php echo $class; ?>">
 			<div class="message">
 				<p><?php echo $t->get_linked_tweet(); ?></p>
 			</div>
-			<p class="meta">
-				<a href="<?php echo BASE_URL.$t->id; ?>/" rel="bookmark"><?php echo $t->get_date(); ?></a>
-				via <?php echo $t->source; ?>
-				<?php echo ($t->in_reply_to_status_id != 0) ? 'in reply to <a href="http://twitter.com/6932712/status/'.$t->in_reply_to_user_id.'">'.$t->in_reply_to_user_id.'</a>' : ''; ?>
-			</p>
+			<p class="meta"><a href="<?php echo BASE_URL.$t->id; ?>/" rel="bookmark"><?php echo $t->get_date(); ?></a> via <?php
+				echo $t->source; echo ($t->in_reply_to_status_id != 0) ? 'in reply to <a href="http://twitter.com/6932712/status/'.$t->in_reply_to_user_id.'">'.$t->in_reply_to_user_id.'</a>' : '';
+			?></p>
 		</div>
 		
 		<?php } } else { ?>

@@ -187,7 +187,10 @@ class ArchiveMyTweets {
 	}
 	
 	/**
-	 * Gets the most recent tweet from the table
+	 * Gets the most recent tweet
+	 *
+	 * @return mixed Returns the most recent tweet or false on failure.
+	 * @author awhalen
 	 */
 	public function get_latest_tweet() {
 	
@@ -207,7 +210,11 @@ class ArchiveMyTweets {
 	}
 	
 	/**
-	 * Gets the most recent tweet from the table
+	 * Gets a tweet
+	 *
+	 * @param int $id The tweet ID.
+	 * @return mixed The mysql resource containing the tweet. On failure this returns false.
+	 * @author awhalen
 	 */
 	public function get_tweet($id) {
 	
@@ -225,6 +232,11 @@ class ArchiveMyTweets {
 	
 	/**
 	 * Gets tweets from the database
+	 *
+	 * @param int $offset The offset at which to start retrieving tweets.
+	 * @param int $limit The maximum number of tweets to return.
+	 * @return mixed Returns a mysql resource with tweets on success, or returns false on failure.
+	 * @author awhalen
 	 */
 	public function get_tweets($offset=0, $limit=20) {
 	
@@ -241,7 +253,11 @@ class ArchiveMyTweets {
 	}
 	
 	/**
-	 * Search the tweets
+	 * Gets search results for the given keyword string.
+	 *
+	 * @param string $k The keywords to search for. Keywords in quotes will be treated as phrases. e.g. "I love" will only match tweets that contain "I love" (without quotes).
+	 * @return mixed Returns a mysql resource on success or false on failure.
+	 * @author awhalen
 	 */
 	public function get_search_results($k) {
 	
@@ -266,16 +282,6 @@ class ArchiveMyTweets {
 		$sql = trim($sql, " or "); // remove that dangling "or"
 		$sql .= ' )';
 		
-		/*
-		//$words = explode('"', $k);
-		$words = explode(' ', $k);
-		$or_statements = array();
-		foreach($words as $w) {
-			if (trim($w) == '') continue;
-			$or_statements[] = "(tweet like '%".mysql_real_escape_string($w)."%')";			
-		}
-		$sql .= implode(' or ', $or_statements);
-		*/
 		$sql .= ' order by id desc';
 		
 		$result = $this->query($sql);
@@ -289,7 +295,12 @@ class ArchiveMyTweets {
 	}
 	
 	/**
-	 * Gets tweets in a certain month
+	 * Gets tweets from a particular month.
+	 *
+	 * @param int $year The year to get tweets from. YYYY format.
+	 * @param int $month The month to get tweets from. MM format.
+	 * @return mixed Returns a mysql resource on success or false on failure.
+	 * @author awhalen
 	 */
 	public function get_tweets_by_month($year, $month) {
 		
@@ -306,7 +317,10 @@ class ArchiveMyTweets {
 	}
 	
 	/**
-	 * Gets the most tweets made in a month
+	 * Returns the maximum number of tweets made in a single month.
+	 *
+	 * @return mixed Returns the maximum number of tweets in a single month on success, or returns false on failure.
+	 * @author awhalen
 	 */
 	public function get_most_tweets_in_a_month() {
 		
@@ -324,7 +338,10 @@ class ArchiveMyTweets {
 	}
 	
 	/**
-	 * Returns the total number of tweets
+	 * Returns the total number of tweets in the database.
+	 *
+	 * @return mixed Returns the total number of tweets on success or false on failure.
+	 * @author awhalen
 	 */
 	public function get_total_tweets() {
 	
@@ -344,6 +361,9 @@ class ArchiveMyTweets {
 	/**
 	 * Returns an array containing monthly data.
 	 * Months are keys, the values contain tweets in that month.
+	 *
+	 * @return mixed Returns an associative array containing monthly totals, or returns false on failure.
+	 * @author awhalen
 	 */
 	public function get_data_for_chart() {
 	
@@ -361,7 +381,11 @@ class ArchiveMyTweets {
 	}
 	
 	/**
-	 * Adds an array of tweets to the database
+	 * Adds an array of Tweet objects to the database.
+	 *
+	 * @param array $tweets An array of Tweet objects.
+	 * @return boolean Returns true if the tweets were added to the database, or returns false on failure.
+	 * @author awhalen
 	 */
 	private function add_tweets($tweets) {
 	
@@ -388,7 +412,10 @@ class ArchiveMyTweets {
 	}
 		
 	/**
-	 * Installs the backup database tables.
+	 * Creates the database table necessary to hold the tweets.
+	 *
+	 * @return boolean Returns true on success, false on failure.
+	 * @author awhalen
 	 */
 	private function install() {
 	
@@ -401,6 +428,9 @@ class ArchiveMyTweets {
 	
 	/**
 	 * Returns true if the database table exists.
+	 *
+	 * @return boolean Returns true if the database table exists, or false if the table hasn't been created.
+	 * @author awhalen
 	 */
 	public function is_installed() {
 	
@@ -412,24 +442,23 @@ class ArchiveMyTweets {
 	}
 	
 	/**
-	 * Runs the database query. Dies if there was an error with it.
+	 * Runs a SQL query.
+	 *
+	 * @param string $sql The SQL to run.
+	 * @return mixed Returns a mysql resource for SELECT, SHOW, DESCRIBE, EXPLAIN queries, or a boolean for INSERT, UPDATE, DELETE, DROP, CREATE queries.
+	 * @author awhalen
 	 */
 	private function query($sql) {
 	
-		$result = mysql_query($sql, $this->get_db_link());
-	
-		if (!$result) {
-			$message  = 'Invalid query: ' . mysql_error() . "\n";
-			$message .= 'Whole query: ' . $sql . "\n";
-			die($message);
-		}
-		
-		return $result;
+		return mysql_query($sql, $this->get_db_link());		
 	
 	}
 	
 	/**
-	 * @return the current db link
+	 * Returns a MySQL link identifier on success or FALSE on failure. If the link doesn't exist, it's created and cached for later requests.
+	 *
+	 * @return mixed Returns a MySQL link identifier on success or FALSE on failure.
+	 * @author awhalen
 	 */
 	private function get_db_link() {
 	
