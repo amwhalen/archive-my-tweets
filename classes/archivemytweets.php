@@ -48,7 +48,7 @@ class ArchiveMyTweets {
 	/**
 	 * Grabs all the latest tweets and puts them into the database.
 	 *
-	 * @return void
+	 * @return string Returns a string with informational output.
 	 * @author awhalen
 	 */
 	public function backup() {
@@ -146,7 +146,7 @@ class ArchiveMyTweets {
 	/**
 	 * Returns a mysql resource with all twitter clients used and how many times they were used.
 	 *
-	 * @return mysql_resource A mysql resource containing twitter clients (source) and counts for each (c).
+	 * @return mixed Returns a mysql resource containing twitter clients (source) and counts for each (c), or returns false on failure.
 	 * @author awhalen
 	 */
 	public function get_twitter_clients() {
@@ -167,8 +167,8 @@ class ArchiveMyTweets {
 	/**
 	 * Returns a mysql resource containing the months that have tweets and the totals.
 	 *
-	 * @param string[optional] $sort This decides if the months are sorted descending (desc) or ascending (asc) by date. Default is 'desc'.
-	 * @return mysql_resource Returns a mysql resource containing the months (m, y) that have tweets and the totals (total).
+	 * @param string $sort This decides if the months are sorted descending (desc) or ascending (asc) by date. Default is 'desc'.
+	 * @return mixed Returns a mysql resource containing the months (m, y) that have tweets and the totals (total), or returns false on failure.
 	 * @author awhalen
 	 */
 	public function get_twitter_months($sort='desc') {
