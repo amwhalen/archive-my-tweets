@@ -5,43 +5,55 @@
  */
 class ArchiveMyTweets {
 
-	var $db_link = null;
-	var $db_name = null;
-	var $db_username = null;
-	var $db_password = null;
-	var $db_host = null;
-	var $db_prefix = null;
-	var $username = null;
-	var $password = null;
-	var $tweets_table = null;
-	var $twitter = null;
+	private $db_link = null;
+	private $db_name = null;
+	private $db_username = null;
+	private $db_password = null;
+	private $db_host = null;
+	private $db_prefix = null;
+	private $username = null;
+	private $consumer_key = null;
+	private $consumer_secret = null;
+	private $oauth_token = null;
+	private $oauth_secret = null;
+	private $tweets_table = null;
+	private $twitter = null;
 
 	/**
 	 * Constructor
 	 *
-	 * @param string $user The Twitter username.
-	 * @param string $pass The Twitter password.
-	 * @param string $db The database name.
-	 * @param string $prefix The database table prefix.
-	 * @param string $host The database host.
-	 * @param string $db_user The database userame.
-	 * @param string $db_pass The database password.
-	 * @author awhalen
+	 * @param string $user 
+	 * @param string $consumer_key 
+	 * @param string $consumer_secret 
+	 * @param string $oauth_token 
+	 * @param string $oauth_secret 
+	 * @param string $db 
+	 * @param string $prefix 
+	 * @param string $host 
+	 * @param string $db_user 
+	 * @param string $db_pass 
 	 */
-	public function __construct($user, $pass, $db, $prefix, $host, $db_user, $db_pass) {
+	public function __construct($user, $consumer_key, $consumer_secret, $oauth_token, $oauth_secret, $db, $prefix, $host, $db_user, $db_pass) {
 		
 		// set everything
 		$this->username = $user;
-		$this->password = $pass;
+		$this->consumer_key = $consumer_key;
+		$this->consumer_secret = $consumer_secret;
+		$this->oauth_token = $oauth_token;
+		$this->oauth_secret = $oauth_secret;
 		$this->db_name = $db;
 		$this->db_prefix = $prefix;
 		$this->db_host = $host;
 		$this->db_username = $db_user;
 		$this->db_password = $db_pass;
 		$this->tweets_table = $this->db_prefix . 'tweets';
-		
-		// sign in to Twitter
-		$this->twitter = new Twitter($this->username, $this->password);
+				
+		// create twitter instance
+		$this->twitter = new Twitter($this->consumer_key, $this->consumer_secret);
+
+		// set oauth
+		$this->twitter->setOAuthToken($this->oauth_token);
+		$this->twitter->setOAuthTokenSecret($this->oauth_secret);
 		
 	}
 	
@@ -86,7 +98,7 @@ class ArchiveMyTweets {
 		
 			try {
 				
-				$result = $this->twitter->getUserTimeline(NULL, $since_id, NULL, $per_request, $page);
+				$result = $this->twitter->statusesUserTimeline(NULL, NULL, NULL, $since_id, NULL, $per_request, $page);
 			
 				$num_results = count($result);
 
@@ -119,14 +131,14 @@ class ArchiveMyTweets {
 		
 		}
 		
-		$rate = $this->twitter->getRateLimitStatus();
+		$rate = $this->twitter->accountRateLimitStatus();
 		$timezone = (function_exists('date_default_timezone_get')) ? ' '.date_default_timezone_get() : '';
 		$plural_q = ($page != 1) ? 'queries' : 'query';
 		$plural_t = (count($results) != 1) ? 'tweets' : 'tweet';
 		
 		// add API info to the output
 		$echo_str .= count($results)." new ".$plural_t." over ".$page." ".$plural_q.".\n";
-		$echo_str .= "API: (".$rate['remaining_hits']."/".$rate['hourly_limit'].") API count resets at ".date("g:ia", $rate['reset_time']).$timezone.".\n";
+		$echo_str .= "API: (".$rate['remaining_hits']."/".$rate['hourly_limit']." remaining) API count resets at ".date("g:ia", $rate['reset_time']).$timezone.".\n";
 		
 		// finally, add the tweets to the database
 		$tweets = array();
@@ -137,7 +149,11 @@ class ArchiveMyTweets {
 			$tweets[] = $tweet;
 									
 		}
-		$this->add_tweets($tweets);
+		$result = $this->add_tweets($tweets);
+		
+		if (!$result) {
+			$echo_str .= 'ERROR INSERTING INTO DATABASE: ' . mysql_error();
+		}
 		
 		return $echo_str;
 	
@@ -392,12 +408,12 @@ class ArchiveMyTweets {
 		if (count($tweets)) {
 		
 			// "insert ignore" will ignore rows with an id that already exists in the table
-			$sql = 'insert ignore into '.$this->tweets_table." (id,user_id,created_at,tweet,source,truncated,favorited,in_reply_to_status_id,in_reply_to_user_id) values";
+			$sql = 'insert ignore into '.$this->tweets_table." (id,user_id,created_at,tweet,source,truncated,favorited,in_reply_to_status_id,in_reply_to_user_id,in_reply_to_screen_name) values";
 		
 			$values = array();
 			
 			foreach ($tweets as $t) {
-				$values[] = "('".mysql_real_escape_string($t->id)."','".mysql_real_escape_string($t->user_id)."','".mysql_real_escape_string($t->created_at)."','".mysql_real_escape_string($t->tweet)."','".mysql_real_escape_string($t->source)."','".mysql_real_escape_string($t->truncated)."','".mysql_real_escape_string($t->favorited)."','".mysql_real_escape_string($t->in_reply_to_status_id)."','".mysql_real_escape_string($t->in_reply_to_user_id)."')";
+				$values[] = "('".mysql_real_escape_string($t->id)."','".mysql_real_escape_string($t->user_id)."','".mysql_real_escape_string($t->created_at)."','".mysql_real_escape_string($t->tweet)."','".mysql_real_escape_string($t->source)."','".mysql_real_escape_string($t->truncated)."','".mysql_real_escape_string($t->favorited)."','".mysql_real_escape_string($t->in_reply_to_status_id)."','".mysql_real_escape_string($t->in_reply_to_user_id)."','".mysql_real_escape_string($t->in_reply_to_screen_name)."')";
 			}
 			
 			// join all the value groups together: values(1,2,3),(4,5,6),(6,7,8)
@@ -419,7 +435,7 @@ class ArchiveMyTweets {
 	 */
 	private function install() {
 	
-		$sql = 'create table '.$this->tweets_table.' ( id bigint(20) unsigned not null unique, user_id bigint(20) unsigned not null, created_at datetime not null, tweet varchar(140), source varchar(255), truncated tinyint(1), favorited tinyint(1), in_reply_to_status_id bigint(20), in_reply_to_user_id bigint(20), index(source) ) ENGINE=MyISAM DEFAULT CHARSET=utf8;';
+		$sql = 'create table '.$this->tweets_table.' ( id bigint(20) unsigned not null unique, user_id bigint(20) unsigned not null, created_at datetime not null, tweet varchar(140), source varchar(255), truncated tinyint(1), favorited tinyint(1), in_reply_to_status_id bigint(20), in_reply_to_user_id bigint(20), in_reply_to_screen_name varchar(15), index(source) ) ENGINE=MyISAM DEFAULT CHARSET=utf8;';
 		$result = $this->query($sql);
 	
 		return $result;
@@ -460,7 +476,7 @@ class ArchiveMyTweets {
 	 * @return mixed Returns a MySQL link identifier on success or FALSE on failure.
 	 * @author awhalen
 	 */
-	private function get_db_link() {
+	public function get_db_link() {
 	
 		// doesn't exist yet?
 		if ($this->db_link == null) {

@@ -3,8 +3,8 @@
 require_once('includes.php');
 
 // create twitter archive object
-$tb = new ArchiveMyTweets(TWITTER_USERNAME, TWITTER_PASSWORD, DB_NAME, DB_TABLE_PREFIX, DB_HOST, DB_USERNAME, DB_PASSWORD);
-if ($tb->db_link === FALSE) { die('Could not establish a connection to the database: ' . mysql_error() . "\n"); }
+$tb = new ArchiveMyTweets(TWITTER_USERNAME, TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET, TWITTER_OAUTH_TOKEN, TWITTER_OAUTH_SECRET, DB_NAME, DB_TABLE_PREFIX, DB_HOST, DB_USERNAME, DB_PASSWORD);
+if ($tb->get_db_link() === FALSE) { die('Could not establish a connection to the database: ' . mysql_error() . "\n"); }
 
 if ($tb->is_installed()) {
 
@@ -105,7 +105,7 @@ if ($tb->is_installed()) {
 				<p><?php echo $t->get_linked_tweet(); ?></p>
 			</div>
 			<p class="meta"><a href="<?php echo BASE_URL.$t->id; ?>/" rel="bookmark"><?php echo $t->get_date(); ?></a> via <?php
-				echo $t->source; echo ($t->in_reply_to_status_id != 0) ? 'in reply to <a href="http://twitter.com/6932712/status/'.$t->in_reply_to_user_id.'">'.$t->in_reply_to_user_id.'</a>' : '';
+				echo $t->source; echo ($t->in_reply_to_status_id != 0) ? ' <a href="http://twitter.com/'.$t->in_reply_to_screen_name.'/status/'.$t->in_reply_to_status_id.'">in reply to '.$t->in_reply_to_screen_name.'</a>' : '';
 			?></p>
 		</div>
 		

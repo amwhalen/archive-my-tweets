@@ -5,15 +5,16 @@
  */
 class Tweet {
 
-	var $id = NULL;
-	var $user_id = NULL;
-	var $created_at = NULL; // YYYY-MM-DD HH:MM:SS
-	var $tweet = '';
-	var $source = '';
-	var $truncated = NULL;
-	var $favorited = NULL;
-	var $in_reply_to_status_id = NULL;
-	var $in_reply_to_user_id = NULL;
+	public $id = NULL;
+	public $user_id = NULL;
+	public $created_at = NULL; // YYYY-MM-DD HH:MM:SS
+	public $tweet = '';
+	public $source = '';
+	public $truncated = NULL;
+	public $favorited = NULL;
+	public $in_reply_to_status_id = NULL;
+	public $in_reply_to_user_id = NULL;
+	public $in_reply_to_screen_name = NULL;
 	
 	/**
 	 * Constructor
@@ -67,16 +68,17 @@ class Tweet {
 	 * Loads this object from an array.
 	 */
 	public function load_array($t) {
-	
+		
 		$this->id = $t['id'];
 		$this->user_id = $t['user']['id'];
-		$this->created_at = date("Y-m-d H:i:s", $t['created_at']);
+		$this->created_at = date('Y-m-d H:i:s', strtotime($t['created_at']));
 		$this->tweet = $t['text'];
 		$this->source = $t['source'];
 		$this->truncated = ($t['truncated']) ? '1' : '0';
 		$this->favorited = ($t['favorited']) ? '1' : '0';
 		$this->in_reply_to_status_id = $t['in_reply_to_status_id'];
 		$this->in_reply_to_user_id = $t['in_reply_to_user_id'];
+		$this->in_reply_to_screen_name = $t['in_reply_to_screen_name'];
 	
 	}
 	
