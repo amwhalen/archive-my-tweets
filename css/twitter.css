@@ -197,7 +197,8 @@ h2 {
 	color: #fff;
 }
 
-#sidebar ul.links li a {
+#sidebar ul.links li a,
+#sidebar ul.clients li {
 	display: block;
 	background-color: #d9edf5;
 	background-image: url(../img/bg.png);

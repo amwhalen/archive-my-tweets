@@ -151,9 +151,10 @@ if ($tb->is_installed()) {
 			// sources
 			$sources = $tb->get_twitter_clients();
 			if ($sources !== false) {
-				echo '<ul>';
+				echo '<ul class="clients">';
 				while ($row = mysql_fetch_object($sources)) {
-					echo '<li><span class="item">'.$row->source.'</span> <span class="total">'.$row->c.'</span></li>';
+					$bg_percent = round($row->c / $total_tweets * 240);
+					echo '<li style="background-position: '.$bg_percent.'px 0px;"><span class="item">'.$row->source.'</span> <span class="total">'.$row->c.'</span></li>';
 				}
 				echo '</ul>';
 			} else {
