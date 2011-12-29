@@ -138,7 +138,7 @@ class ArchiveMyTweets {
 		
 		// add API info to the output
 		$echo_str .= count($results)." new ".$plural_t." over ".$page." ".$plural_q.".\n";
-		$echo_str .= "API: (".$rate['remaining_hits']."/".$rate['hourly_limit']." remaining) API count resets at ".date("g:ia", $rate['reset_time']).$timezone.".\n";
+		$echo_str .= "API: (".$rate['remaining_hits']."/".$rate['hourly_limit']." remaining) API count resets at ".date("g:ia", strtotime($rate['reset_time'])).$timezone.".\n";
 		
 		// finally, add the tweets to the database
 		$tweets = array();
