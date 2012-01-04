@@ -11,6 +11,13 @@ if ($tb->is_installed()) {
 	// get number of tweets
 	$total_tweets = $tb->get_total_tweets();
 	$max_tweets = $tb->get_most_tweets_in_a_month();
+	$per_page = 100;
+
+	// defaults
+	$search = false;
+	$single_tweet = false;
+	$monthly_archive = false;
+	$all_tweets = false;
 
 	// the big switch. this decides what to show on the page.
 	if (isset($_GET['id'])) {
@@ -42,9 +49,13 @@ if ($tb->is_installed()) {
 	
 	} else {
 	
+		$current_page = (isset($_GET['page'])) ? $_GET['page']: 1;
+		$offset = ($current_page > 1) ? (($current_page-1) * $per_page) : 0;
+	
 		// default view: show all the tweets
 		$all_tweets = true;
-		$tweets = $tb->get_tweets();
+		$tweets = $tb->get_tweets($offset, $per_page);
+		$pagination = $tb->get_pagination($total_tweets, $current_page, $per_page);
 		$header = '';
 	
 	}
@@ -100,16 +111,22 @@ if ($tb->is_installed()) {
 			
 		?>
 		
-		<div class="<?php echo $class; ?>">
-			<div class="message">
-				<p><?php echo $t->get_linked_tweet(); ?></p>
+			<div class="<?php echo $class; ?>">
+				<div class="message">
+					<p><?php echo $t->get_linked_tweet(); ?></p>
+				</div>
+				<p class="meta"><a href="<?php echo BASE_URL.$t->id; ?>/" rel="bookmark"><?php echo $t->get_date(); ?></a> via <?php
+					echo $t->source; echo ($t->in_reply_to_status_id != 0) ? ' <a href="http://twitter.com/'.$t->in_reply_to_screen_name.'/status/'.$t->in_reply_to_status_id.'">in reply to '.$t->in_reply_to_screen_name.'</a>' : '';
+				?></p>
 			</div>
-			<p class="meta"><a href="<?php echo BASE_URL.$t->id; ?>/" rel="bookmark"><?php echo $t->get_date(); ?></a> via <?php
-				echo $t->source; echo ($t->in_reply_to_status_id != 0) ? ' <a href="http://twitter.com/'.$t->in_reply_to_screen_name.'/status/'.$t->in_reply_to_status_id.'">in reply to '.$t->in_reply_to_screen_name.'</a>' : '';
-			?></p>
-		</div>
 		
-		<?php } } else { ?>
+			<?php } ?>
+			
+			<?php if (isset($pagination)) { ?>
+			<div id="pagination"><?php echo $pagination; ?></div>
+			<?php } ?>
+	
+		<?php } else { ?>
 		
 		<p>No tweets!</p>
 		

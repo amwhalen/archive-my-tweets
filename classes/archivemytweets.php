@@ -18,6 +18,9 @@ class ArchiveMyTweets {
 	private $oauth_secret = null;
 	private $tweets_table = null;
 	private $twitter = null;
+	
+	// current version
+	const VERSION = '0.3';
 
 	/**
 	 * Constructor
@@ -94,11 +97,12 @@ class ArchiveMyTweets {
 		}
 		
 		// keep going while we're getting back more tweets
-		while($got_results) {
+		while ($got_results) {
 		
 			try {
 				
-				$result = $this->twitter->statusesUserTimeline(NULL, NULL, NULL, $since_id, NULL, $per_request, $page);
+				//$result = $this->twitter->statusesUserTimeline(NULL, NULL, NULL, $since_id, NULL, $per_request, $page);
+				$result = $this->twitter->statusesUserTimeline(NULL, NULL, $since_id, NULL, $per_request, $page, FALSE, TRUE, FALSE);
 			
 				$num_results = count($result);
 
@@ -111,7 +115,7 @@ class ArchiveMyTweets {
 
 					// if it's less than the per request amount, some retweets may have been filtered out.
 					if ($num_results < $per_request) {
-						$echo_str .= "Got ".$num_results." results on page ".$page.". Retweets were probably filtered out.\n";
+						$echo_str .= "Got ".$num_results." results on page ".$page.". (Some tweets may have been filtered out.)\n";
 					} else {
 						$echo_str .= "Got ".$num_results." results on page ".$page.".\n";
 					}
@@ -127,7 +131,7 @@ class ArchiveMyTweets {
 				$exception_count++;
 			}
 			
-			if ($exception_count > 5) { return $echo_str . 'Twitter is being flaky. Too many exceptions! Try again later.' . "\n"; }
+			if ($exception_count > 25) { return $echo_str . 'Twitter is being flaky. Too many exceptions! Try again later.' . "\n"; }
 		
 		}
 		
@@ -151,8 +155,10 @@ class ArchiveMyTweets {
 		}
 		$result = $this->add_tweets($tweets);
 		
-		if (!$result) {
+		if ($result === false) {
 			$echo_str .= 'ERROR INSERTING INTO DATABASE: ' . mysql_error();
+		} else if ( $result == 0 ) {
+			$echo_str .= 'No new tweets added to the database.';
 		}
 		
 		return $echo_str;
@@ -257,7 +263,7 @@ class ArchiveMyTweets {
 	public function get_tweets($offset=0, $limit=20) {
 	
 		$sql = 'select * from '.$this->tweets_table.' order by id desc limit '.$offset.','.$limit;
-		
+				
 		$result = $this->query($sql);
 	
 		if (mysql_num_rows($result) > 0) {
@@ -277,6 +283,8 @@ class ArchiveMyTweets {
 	 */
 	public function get_search_results($k) {
 	
+		if (trim($k) == '') return false;
+	
 		$sql  = 'select * from '.$this->tweets_table.' where 1 ';
 		
 		// split out the quoted items
@@ -284,7 +292,7 @@ class ArchiveMyTweets {
 		// $phrases[1] is an array of strings matched by the first parenthesized subpattern, and so on. (quotes stripped)
 		// the .+? means match 1 or more characters, but don't be "greedy", i.e., match the smallest amount
 		preg_match_all("/\"(.+?)\"/", $k, $phrases);
-		$words = split(' ', preg_replace('/".+?"/', '', $k));
+		$words = explode(' ', preg_replace('/".+?"/', '', $k));
 		$word_list = array_merge($phrases[1], $words);
 			
 		// create the sql statement
@@ -299,7 +307,7 @@ class ArchiveMyTweets {
 		$sql .= ' )';
 		
 		$sql .= ' order by id desc';
-		
+				
 		$result = $this->query($sql);
 	
 		if (mysql_num_rows($result) > 0) {
@@ -397,10 +405,41 @@ class ArchiveMyTweets {
 	}
 	
 	/**
+	 * Returns the HTML to display the pagination links.
+	 *
+	 * @param int $total_tweets The total tweets in the DB.
+	 * @param int $current_page The current page displayed.
+	 * @param int $per_page The total tweets per page.
+	 * @return string The pagination links HTML.
+	 * @author awhalen
+	 */
+	public function get_pagination($total_tweets, $current_page=1, $per_page=100) {
+		
+		$num_pages = ceil($total_tweets / $per_page);
+		
+		$html = '<ul>';
+		
+		if ($current_page > 1) {
+			$html .= '<li><a href="' . BASE_URL . 'page/' . ($current_page - 1) . '">&larr; Newer Tweets</a></li>';
+		}
+		
+		if ($current_page < $num_pages) {
+			$html .= '<li><a href="' . BASE_URL . 'page/' . ($current_page + 1) . '">Older Tweets &rarr;</a></li>';
+		}
+		
+		$html .= '</ul>';
+		
+		$html .= '<div class="pages">Page ' . $current_page . ' of ' . $num_pages . '</div>';
+		
+		return $html;
+		
+	}
+	
+	/**
 	 * Adds an array of Tweet objects to the database.
 	 *
 	 * @param array $tweets An array of Tweet objects.
-	 * @return boolean Returns true if the tweets were added to the database, or returns false on failure.
+	 * @return int|boolean Returns the number of tweets added to the database, or returns FALSE if there was a MySQL error.
 	 * @author awhalen
 	 */
 	private function add_tweets($tweets) {
@@ -419,11 +458,17 @@ class ArchiveMyTweets {
 			// join all the value groups together: values(1,2,3),(4,5,6),(6,7,8)
 			$sql .= implode(",", $values);
 			
-			return $this->query($sql);
+			$result = $this->query($sql);
+			
+			if ($result === false) {
+				return false;
+			} else {
+				return mysql_affected_rows($this->get_db_link());
+			}
 		
 		}
 		
-		return false;
+		return 0;
 	
 	}
 		

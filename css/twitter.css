@@ -160,6 +160,49 @@ h2 {
 }
 
 
+/*-- pagination ----------------------------------------------- */
+
+#pagination {
+	margin: 30px 0 0 0;
+}
+
+#pagination ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+#pagination ul li {
+	display: inline;
+	padding-right: 5px;
+}
+
+#pagination ul li a {
+	background: #eee;
+	color: #08b;
+	padding: 5px 8px;
+	text-decoration: none;
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+}
+
+#pagination ul li a:hover {
+	background: #08b;
+	color: #fff;
+}
+
+#pagination ul li a.current {
+	background: #333;
+	color: #fff;
+}
+
+.pages {
+	color: #666;
+	margin: 15px 0 0 0;
+}
+
+
 /*-- sidebar ----------------------------------------------- */
 
 #sidebar {
