@@ -96,15 +96,18 @@ class ArchiveMyTweets {
 			$echo_str .= "Getting tweets with an id greater than ".$since_id.".\n";
 		}
 		
+		// keep track of how many tweets were added
+		$numAdded = 0;
+		
 		// keep going while we're getting back more tweets
 		while ($got_results) {
 		
 			try {
 				
 				//$result = $this->twitter->statusesUserTimeline(NULL, NULL, NULL, $since_id, NULL, $per_request, $page);
-				$result = $this->twitter->statusesUserTimeline(NULL, NULL, $since_id, NULL, $per_request, $page, FALSE, TRUE, FALSE);
+				$tweetResults = $this->twitter->statusesUserTimeline(NULL, NULL, $since_id, NULL, $per_request, $page, FALSE, TRUE, FALSE);
 			
-				$num_results = count($result);
+				$num_results = count($tweetResults);
 
 				if ($num_results == 0) {
 					// because retweets are stripped out of results,
@@ -122,8 +125,27 @@ class ArchiveMyTweets {
 
 					$page++;
 
-					$results = array_merge($results, $result);
-
+					//$results = array_merge($results, $result);
+					
+					// add these tweets to the database
+					$tweets = array();
+					foreach ($tweetResults as $t) {
+						
+						$tweet = new Tweet();
+						$tweet->load_array($t);
+						$tweets[] = $tweet;
+									
+					}
+					$result = $this->add_tweets($tweets);
+		
+					if ($result === false) {
+						$echo_str .= 'ERROR INSERTING INTO DATABASE: ' . mysql_error() . "\n";
+					} else if ( $result == 0 ) {
+						$echo_str .= 'Zero tweets added.' . "\n";
+					} else {
+						$numAdded += $result;
+					}
+					
 				}
 			
 			} catch (Exception $e) {
@@ -138,28 +160,13 @@ class ArchiveMyTweets {
 		$rate = $this->twitter->accountRateLimitStatus();
 		$timezone = (function_exists('date_default_timezone_get')) ? ' '.date_default_timezone_get() : '';
 		$plural_q = ($page != 1) ? 'queries' : 'query';
-		$plural_t = (count($results) != 1) ? 'tweets' : 'tweet';
+		$plural_t = ($numAdded != 1) ? 'tweets' : 'tweet';
 		
 		// add API info to the output
-		$echo_str .= count($results)." new ".$plural_t." over ".$page." ".$plural_q.".\n";
+		$echo_str .= $numAdded." new ".$plural_t." over ".$page." ".$plural_q.".\n";
 		$echo_str .= "API: (".$rate['remaining_hits']."/".$rate['hourly_limit']." remaining) API count resets at ".date("g:ia", strtotime($rate['reset_time'])).$timezone.".\n";
 		
-		// finally, add the tweets to the database
-		$tweets = array();
-		foreach ($results as $t) {
-			
-			$tweet = new Tweet();
-			$tweet->load_array($t);
-			$tweets[] = $tweet;
-									
-		}
-		$result = $this->add_tweets($tweets);
-		
-		if ($result === false) {
-			$echo_str .= 'ERROR INSERTING INTO DATABASE: ' . mysql_error();
-		} else if ( $result == 0 ) {
-			$echo_str .= 'No new tweets added to the database.';
-		}
+		// all tweets used to be added here
 		
 		return $echo_str;
 	
@@ -457,7 +464,7 @@ class ArchiveMyTweets {
 			
 			// join all the value groups together: values(1,2,3),(4,5,6),(6,7,8)
 			$sql .= implode(",", $values);
-			
+						
 			$result = $this->query($sql);
 			
 			if ($result === false) {
@@ -467,7 +474,7 @@ class ArchiveMyTweets {
 			}
 		
 		}
-		
+				
 		return 0;
 	
 	}
