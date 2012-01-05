@@ -20,7 +20,7 @@ class ArchiveMyTweets {
 	private $twitter = null;
 	
 	// current version
-	const VERSION = '0.3';
+	const VERSION = '0.4';
 
 	/**
 	 * Constructor
