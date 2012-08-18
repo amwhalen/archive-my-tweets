@@ -1,7 +1,7 @@
 Archive My Tweets
 =================
 
-Archive your tweets to easily browse and search them - all on your own website and in your control. See an example installation on my website: (http://amwhalen.com/twitter/).
+Archive your tweets to easily browse and search them - all on your own website and in your control. See an example installation on my website: http://amwhalen.com/twitter/.
 
 Installation
 ------------
@@ -14,7 +14,7 @@ Installation
 Getting Twitter API Tokens
 --------------------------
 
-1. Visit (https://dev.twitter.com/apps/new) and sign in with your Twitter credentials.
+1. Visit https://dev.twitter.com/apps/new and sign in with your Twitter credentials.
 2. Fill in the Name and Description with whatever you'd like.
 3. Fill in the Website and Callback fields with the URL of your twitter archive, e.g. http://amwhalen.com/twitter/.
 4. Save your information and put the keys and tokens into your config.php file.
