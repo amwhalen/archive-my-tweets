@@ -27,7 +27,11 @@ You can replace the file img/avatar.png with your own profile picture. It should
 Setting Up a Cron Job
 ---------------------
 
-If you want to automatically update your tweets you'll need to set up a cron job. You can find more information on Cron elsewhere, but here's an example that uses wget to visit your cron.php every hour of the day:
+If you want to automatically update your tweets you'll need to set up a cron job. You can find more information on Cron elsewhere, but here's an example that run your cron.php every hour of the day:
+
+	0 * * * * /usr/bin/php /path/to/the/cron.php
+
+If you want to set up the cron remotely, use this instead:
 
 	0 * * * * /usr/bin/wget -O - -q -t 1 http://example.com/tweets/cron.php?secret=MY_SECRET
 
