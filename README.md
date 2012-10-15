@@ -29,15 +29,15 @@ Setting Up a Cron Job
 
 If you want to automatically update your tweets you'll need to set up a cron job. You can find more information on Cron elsewhere, but here's an example that run your cron.php every hour of the day:
 
-	0 * * * * /usr/bin/php /path/to/the/cron.php
+	0 * * * * /usr/bin/env php /path/to/the/cron.php
 
-If you want to set up the cron remotely, use this instead:
+If you want to set up the cron job to run remotely, use this instead:
 
-	0 * * * * /usr/bin/wget -O - -q -t 1 http://example.com/tweets/cron.php?secret=MY_SECRET
+	0 * * * * /usr/bin/env wget -O - -q -t 1 http://example.com/tweets/cron.php?secret=MY_SECRET
 
 The "secret" is so that only you can run the cron script instead of just any visitor. This will protect your Twitter API limit (350 requests per hour), which is tied to your username. If you don't have wget installed on your server, you could try to use cURL instead:
 
-	0 * * * * /usr/bin/curl --silent --compressed http://example.com/tweets/cron.php?secret=MY_SECRET
+	0 * * * * /usr/bin/env curl --silent --compressed http://example.com/tweets/cron.php?secret=MY_SECRET
 
 FAQ
 ---
@@ -45,3 +45,5 @@ FAQ
 * **Why aren't my monthly /archive/ pages working?** Your FTP client may have missed uploading the .htaccess file. Make sure your client is configured to upload "hidden" files like this.
 
 * **Why is my cron.php page blank when I access it?** Your server may need cURL support in PHP. See the [PHP Docs for installing cURL](http://www.php.net/manual/en/curl.setup.php).
+
+* **Why don't my older tweets show up?** Twitter limits API calls to return only the most recent 3200 tweets from any user's timeline. See the [Twitter API Documentation](https://dev.twitter.com/docs/api/1.1/get/statuses/user_timeline).
