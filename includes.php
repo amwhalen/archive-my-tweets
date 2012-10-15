@@ -1,6 +1,6 @@
 <?php
 
-$missing_config = 'Missing config.php file. Copy config.example.php to config.php and customize the settings.';
+$missing_config = "Missing config.php file. Copy config.example.php to config.php and customize the settings.\n";
 
 if ( ! file_exists( dirname(__FILE__) . '/config.php' ) ) {
 	die($missing_config);
