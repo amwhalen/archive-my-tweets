@@ -180,7 +180,7 @@ class ArchiveMyTweets {
 	 */
 	public function get_twitter_clients() {
 	
-		$sql = 'select source, count(source) as c from '.$this->tweets_table.' group by source order by count(source) desc';
+		$sql = 'select source, count(*) as total, count(source) as c from '.$this->tweets_table.' group by source order by count(source) desc';
 	
 		$result = $this->query($sql);
 	
@@ -323,6 +323,27 @@ class ArchiveMyTweets {
 			return false;
 		}
 	
+	}
+	
+	/**
+	 * Gets tweets from a particular client.
+	 *
+	 * @param string $client The client to get tweets from.
+	 * @return mixed Returns a mysql resource on success or false on failure.
+	 * @author awhalen
+	 */
+	public function get_tweets_by_client($client) {
+		
+		$sql = 'select * from '.$this->tweets_table.' where source REGEXP "<a.*>'.mysql_real_escape_string($client).'</a>" order by id desc';
+
+		$result = $this->query($sql);
+	
+		if (mysql_num_rows($result) > 0) {
+			return $result;
+                } else {
+			return false;
+		}
+		
 	}
 	
 	/**
