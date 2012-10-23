@@ -8,5 +8,8 @@ RewriteRule ^archive/([0-9]{4})/([0-9]{2})/([0-9]{2})/?$ index.php?year=$1&month
 RewriteRule ^archive/([0-9]{4})/([0-9]{2})/?$ index.php?year=$1&month=$2 [L]
 RewriteRule ^archive/([0-9]{4})/?$ index.php?year=$1 [L]
 
+# Tweets by client
+RewriteRule ^client/(.*)/$ index.php?client=$1 [L]
+
 # Paginated Index
 RewriteRule ^page/([0-9]+)/?$ index.php?page=$1 [L]

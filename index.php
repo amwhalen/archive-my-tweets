@@ -47,6 +47,14 @@ if ($tb->is_installed()) {
 		$tweets = $tb->get_tweets_by_month($archive_year, $archive_month);
 		$header = 'Tweets from '.date('F Y', strtotime($archive_year.'-'.$archive_month.'-01'));
 	
+	} else if (isset($_GET['client'])) {
+	
+		// show tweets from a specific month
+		$per_client_archive = true;
+		$client = $_GET['client'];
+		$tweets = $tb->get_tweets_by_client($client);
+		$header .= 'Tweets via '.$client;
+	
 	} else {
 	
 		$current_page = (isset($_GET['page'])) ? $_GET['page']: 1;
@@ -163,22 +171,33 @@ if ($tb->is_installed()) {
 		
 		<div id="sources" class="widget">
 			<h3>Clients</h3>
-			<?php
-			
-			// sources
-			$sources = $tb->get_twitter_clients();
-			if ($sources !== false) {
-				echo '<ul class="clients">';
-				while ($row = mysql_fetch_object($sources)) {
-					$bg_percent = round($row->c / $total_tweets * 240);
-					echo '<li style="background-position: '.$bg_percent.'px 0px;"><span class="item">'.$row->source.'</span> <span class="total">'.$row->c.'</span></li>';
-				}
-				echo '</ul>';
-			} else {
-				echo '<p>No clients.</p>';
-			}
-			
-			?>
+
+                        <ul class="links">
+
+			<?php			
+                                // sources
+                                $sources = $tb->get_twitter_clients();
+                                if ($sources !== false) {
+					$class = '';
+					while ($row = mysql_fetch_object($sources)) {
+						$class = ($per_client_archive && $client==$row->c) ? 'here': '';
+						$client_name = strip_tags($row->source);
+						$url = BASE_URL.'client/'.$client_name.'/';
+						$bg_percent = round($row->total / $max_tweets * 240);
+						echo '<li class="'.$class.'"><a href="'.$url.'" style="background-position: '.$bg_percent.'px 0px;"><span class="item">'.strip_tags($row->source).'</span> <span class="total">'.$row->c.'</span></a></li>';
+					}
+                                        /*
+                                        while ($row = mysql_fetch_object($sources)) {
+                                                $bg_percent = round($row->c / $total_tweets * 240);
+                                                echo '<li style="background-position: '.$bg_percent.'px 0px;"><span class="item">'.$row->source.'</span> <span class="total">'.$row->c.'</span></li>';
+                                        }
+                                         */
+                                } else {
+                                        echo '<li>No clients.</li>';
+                                }
+                                
+                                ?>
+                        </ul>
 		</div>
 		
 	</div>
