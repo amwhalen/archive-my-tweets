@@ -55,7 +55,7 @@ class Tweet {
 
 		// linkify tags
 		$status_text = preg_replace(
-			'/(^|\s)#(\w+)/',
+			'/(^|\s)#(\S+)/',
 			'\1#<a href="http://search.twitter.com/search?q=%23\2">\2</a>',
 			$status_text
 		);
