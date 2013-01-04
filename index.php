@@ -123,7 +123,7 @@ if ($tb->is_installed()) {
 				<div class="message">
 					<p><?php echo $t->get_linked_tweet(); ?></p>
 				</div>
-				<p class="meta"><a href="<?php echo BASE_URL.$t->id; ?>/" rel="bookmark"><?php echo $t->get_date(); ?></a> via <?php
+				<p class="meta"><a href="<?php echo ($single_tweet ? 'http://twitter.com/'.TWITTER_USERNAME.'/status/' : BASE_URL).$t->id; ?>/" rel="bookmark"><?php echo $t->get_date(); ?></a> via <?php
 					echo $t->source; echo ($t->in_reply_to_status_id != 0) ? ' <a href="http://twitter.com/'.$t->in_reply_to_screen_name.'/status/'.$t->in_reply_to_status_id.'">in reply to '.$t->in_reply_to_screen_name.'</a>' : '';
 				?></p>
 			</div>
