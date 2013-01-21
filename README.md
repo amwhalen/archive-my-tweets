@@ -39,6 +39,15 @@ The "secret" is so that only you can run the cron script instead of just any vis
 
 	0 * * * * /usr/bin/env curl --silent --compressed http://example.com/tweets/cron.php?secret=MY_SECRET
 
+Upgrading
+---------
+
+Just replace all of the old files with the new files. If you're using an FTP client, the easiest way is to upload and overwrite the entire directory.
+
+If you're running from a cloned copy from GitHub, just do a 'git pull' to grab the latest code.
+
+Whichever method you choose, just remember to keep your customized config.php file in place.
+
 FAQ
 ---
 
