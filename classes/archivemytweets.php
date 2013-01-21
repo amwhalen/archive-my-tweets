@@ -104,7 +104,6 @@ class ArchiveMyTweets {
 		
 			try {
 				
-				//$result = $this->twitter->statusesUserTimeline(NULL, NULL, NULL, $since_id, NULL, $per_request, $page);
 				$tweetResults = $this->twitter->statusesUserTimeline(NULL, NULL, $since_id, NULL, $per_request, $page, FALSE, TRUE, FALSE);
 			
 				$num_results = count($tweetResults);
@@ -280,6 +279,28 @@ class ArchiveMyTweets {
 		}
 	
 	}
+
+	/**
+	 * Gets favorite tweets from the database
+	 *
+	 * @param int $offset The offset at which to start retrieving tweets.
+	 * @param int $limit The maximum number of tweets to return.
+	 * @return mixed Returns a mysql resource with tweets on success, or returns false on failure.
+	 * @author awhalen
+	 */
+	public function get_favorite_tweets() {
+	
+		$sql = 'select * from '.$this->tweets_table.' where favorited=1 order by id desc';
+				
+		$result = $this->query($sql);
+	
+		if (mysql_num_rows($result) > 0) {
+			return $result;
+		} else {
+			return false;
+		}
+	
+	}
 	
 	/**
 	 * Gets search results for the given keyword string.
@@ -388,6 +409,27 @@ class ArchiveMyTweets {
 		}
 		
 	}
+
+	/**
+	 * Returns the most-used client total tweets.
+	 *
+	 * @return mixed Returns the most-used client total tweets on success, or returns false on failure.
+	 * @author awhalen
+	 */
+	public function get_most_popular_client_total() {
+		
+		$sql = 'select count(*) AS total FROM '.$this->tweets_table.' GROUP BY source order by total desc limit 1';
+		
+		$result = $this->query($sql);
+	
+		if (mysql_num_rows($result) > 0) {
+			$row = mysql_fetch_object($result);
+			return $row->total;
+		} else {
+			return false;
+		}
+		
+	}
 	
 	/**
 	 * Returns the total number of tweets in the database.
@@ -398,6 +440,48 @@ class ArchiveMyTweets {
 	public function get_total_tweets() {
 	
 		$sql = 'select count(*) as c from '.$this->tweets_table;
+		
+		$result = $this->query($sql);
+	
+		if (mysql_num_rows($result) > 0) {
+			$row = mysql_fetch_object($result);
+			return $row->c;
+		} else {
+			return false;
+		}
+	
+	}
+
+	/**
+	 * Returns the total number of tweets in the database.
+	 *
+	 * @return mixed Returns the total number of favorite tweets on success or false on failure.
+	 * @author awhalen
+	 */
+	public function get_total_favorite_tweets() {
+	
+		$sql = 'select count(*) as c from '.$this->tweets_table.' where favorited=1';
+		
+		$result = $this->query($sql);
+	
+		if (mysql_num_rows($result) > 0) {
+			$row = mysql_fetch_object($result);
+			return $row->c;
+		} else {
+			return false;
+		}
+	
+	}
+
+	/**
+	 * Returns the total number of clients in the database.
+	 *
+	 * @return mixed Returns the total number of clients on success or false on failure.
+	 * @author awhalen
+	 */
+	public function get_total_clients() {
+	
+		$sql = 'select count(distinct source) as c from '.$this->tweets_table;
 		
 		$result = $this->query($sql);
 	
@@ -445,14 +529,14 @@ class ArchiveMyTweets {
 		
 		$num_pages = ceil($total_tweets / $per_page);
 		
-		$html = '<ul>';
+		$html = '<ul class="pager">';
 		
 		if ($current_page > 1) {
-			$html .= '<li><a href="' . BASE_URL . 'page/' . ($current_page - 1) . '">&larr; Newer Tweets</a></li>';
+			$html .= '<li class="previous"><a href="' . BASE_URL . 'page/' . ($current_page - 1) . '">&larr; Newer Tweets</a></li>';
 		}
 		
 		if ($current_page < $num_pages) {
-			$html .= '<li><a href="' . BASE_URL . 'page/' . ($current_page + 1) . '">Older Tweets &rarr;</a></li>';
+			$html .= '<li class="next"><a href="' . BASE_URL . 'page/' . ($current_page + 1) . '">Older Tweets &rarr;</a></li>';
 		}
 		
 		$html .= '</ul>';

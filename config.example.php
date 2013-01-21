@@ -25,7 +25,7 @@ define('DB_NAME',     '');
 define('TWITTER_CRON_SECRET', '');
 
 // extra database stuff. the defaults are probably fine.
-define('DB_TABLE_PREFIX', 	'amt_');
-define('DB_HOST', 			'localhost'); // add a port number like this: example.com:3306
+define('DB_TABLE_PREFIX', 	'amt2_');
+define('DB_HOST', 			'localhost'); // you can add a port number like this: example.com:3306
 
-?>
+// end PHP

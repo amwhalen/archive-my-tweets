@@ -13,3 +13,6 @@ RewriteRule ^client/(.*)/$ index.php?client=$1 [L]
 
 # Paginated Index
 RewriteRule ^page/([0-9]+)/?$ index.php?page=$1 [L]
+
+# Favorites
+RewriteRule ^favorites/?$ index.php?favorites=1 [L]

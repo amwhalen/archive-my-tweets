@@ -48,15 +48,15 @@ class Tweet {
 
 		// linkify twitter users
 		$status_text = preg_replace(
-			'/(^|\s)@(\w+)/',
-			'\1@<a href="http://twitter.com/\2">\2</a>',
+			'/(^|\s)(@(\w+))/',
+			'\1<a href="http://twitter.com/\3">\2</a>',
 			$status_text
 		);
 
 		// linkify tags
 		$status_text = preg_replace(
-			'/(^|\s)#(\S+)/',
-			'\1#<a href="http://search.twitter.com/search?q=%23\2">\2</a>',
+			'/(^|\s)(#(\S+))/',
+			'\1<a href="http://search.twitter.com/search?q=%23\3">\2</a>',
 			$status_text
 		);
 

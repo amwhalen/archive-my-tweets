@@ -1,0 +1,176 @@
+
+/*-- general ----------------------------------------------- */
+
+body {
+	padding-top: 60px;
+	background: #eee !important;
+}
+
+.navbar .avatar {
+	background-position: 0 10px;
+	margin: 0 15px 0 0px;
+	padding: 8px 2px;
+	width: 20px;
+	height: 20px;
+}
+
+
+/*-- tweets ----------------------------------------------- */
+
+#tweets {
+	background: #fff;
+	border: 1px solid #e5e5e5;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	padding: 30px 0;
+}
+
+#tweets .page-header {
+	margin-top: -15px;
+	margin-bottom: 20px;
+	padding-left: 30px;
+	padding-right: 30px;
+}
+
+#tweets .tweet {
+	margin-bottom: 15px;
+	padding: 0 30px 10px 30px;
+	border-bottom: 1px solid #eee;
+}
+
+#tweets .tweet p {
+	margin: 0;
+}
+
+#tweets .tweet .meta,
+#tweets .tweet .meta a {
+	color: #999;
+	font-size: 12px;
+}
+
+#tweets .no-tweets {
+	padding: 0 30px;
+}
+
+
+/*-- pagination ----------------------------------------------- */
+
+#pagination {
+	margin: 30px 0 0 0;
+	padding: 0 30px;
+}
+
+.pages {
+	text-align: center;
+	color: #666;
+	margin: 15px 0 0 0;
+}
+
+
+/*-- sidebar ----------------------------------------------- */
+
+#sidebar ul.links {
+	margin: 0;
+}
+
+#sidebar ul.links li {
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+}
+
+#sidebar ul.links li a {
+	display: block;
+	position: relative;
+	color: #195e77;
+	padding: 2px 10px;
+	text-decoration: none;
+	border-top: 1px solid #eee;
+}
+
+#sidebar ul.links li.all-tweets a {
+	-webkit-border-top-left-radius: 5px;
+	-webkit-border-top-right-radius: 5px;
+	-moz-border-radius-topleft: 5px;
+	-moz-border-radius-topright: 5px;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	border-top: none;
+}
+
+#sidebar ul.links li:last-child a {
+	-webkit-border-bottom-right-radius: 5px;
+	-webkit-border-bottom-left-radius: 5px;
+	-moz-border-radius-bottomright: 5px;
+	-moz-border-radius-bottomleft: 5px;
+	border-bottom-right-radius: 5px;
+	border-bottom-left-radius: 5px;
+}
+
+#sidebar ul.links li.here a,
+#sidebar ul.links li a:hover {
+	background-color: #333;
+	color: #fff;
+	text-decoration: none;
+}
+
+#sidebar ul.links li a .month {
+	position: relative;
+	z-index: 3;
+	margin: 0 45px 0 0;
+}
+
+#sidebar ul.links li a .total {
+	position: absolute;
+	right: 10px;
+	color: #999;
+	text-align: right;
+	z-index: 2;
+}
+
+#sidebar ul.links li a .bar {
+	display: block;
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	z-index: 1;
+	background-color: #d9edf5;
+}
+
+#sidebar ul.links li.here a .bar,
+#sidebar ul.links li a:hover .bar {
+	background-color: #33a0c9;
+}
+
+#sidebar ul.links li.here .total,
+#sidebar ul.links li a:hover .total {
+	color: #fff;
+}
+
+#sidebar .widget {
+	margin: 0 0 30px 0;
+	background: #fff;
+	padding: 0;
+	border: 1px solid #e5e5e5;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+}
+
+#sidebar .widget h3 {
+	padding: 0 15px;
+}
+
+
+/*-- footer ----------------------------------------------- */
+
+#footer {
+	text-align: center;
+	padding: 30px 0;
+	margin-top: 70px;
+	border-top: 1px solid #e5e5e5;
+	background-color: #fff;
+}
+
