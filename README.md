@@ -53,8 +53,9 @@ To import the archive follow these steps:
 1. Visit your Twitter account settings: [https://twitter.com/settings/account](https://twitter.com/settings/account)
 2. Near the bottom of the settings page there should be a button to download your archive. (If you don't see it yet, you may have to wait until it's rolled out to all accounts.)
 3. Once you've downloaded and unzipped your archive, copy all of the .js files in the data/js/tweets/ folder over to your server into the 'json' folder.
-   ![js files](https://raw.github.com/amwhalen/archive-my-tweets/master/img/screenshots/jsfiles.png)
-4. Manually run your cron.php file, or wait until your next scheduled update. Check for any errors in the output
+4. Manually run your cron.php file, or wait until your next scheduled update. Check for any errors in the output to make sure it's loading in your tweets.
+
+![js files](https://raw.github.com/amwhalen/archive-my-tweets/master/img/screenshots/jsfiles.png)
 
 You'll only have to do this one time, as the cron.php running regularly will import all your newest tweets. Tweets that are already in your database will be ignored, so don't worry about duplication.
 
