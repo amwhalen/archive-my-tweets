@@ -81,6 +81,45 @@ class Tweet {
 		$this->in_reply_to_screen_name = $t['in_reply_to_screen_name'];
 	
 	}
+
+	/**
+	 * Loads this object from another object decoded from JSON.
+	 */
+	public function load_json_object($t) {
+
+		$this->id                       = $t->id;
+		$this->in_reply_to_status_id    = (isset($t->in_reply_to_status_id)) ? $t->in_reply_to_status_id : null;
+		$this->in_reply_to_user_id      = (isset($t->in_reply_to_user_id)) ? $t->in_reply_to_user_id : null;
+		$this->retweeted_status_id      = (isset($t->retweeted_status)) ? $t->retweeted_status->id : null;
+		$this->retweeted_status_user_id = (isset($t->retweeted_status)) ? $t->retweeted_status->user->id : null;
+		$this->created_at               = date('Y-m-d H:i:s', strtotime($t->created_at));
+		$this->source                   = $t->source;
+		$this->tweet                    = $t->text;
+		$this->user_id                  = $t->user->id;
+		// Not included in JSON
+		$this->favorited                = 0;
+		$this->truncated                = 0;
+
+	}
+
+	/**
+	 * Loads this object from a row in a CSV twitter archive file
+	 */
+	public function load_csv_row($data) {
+
+		$this->id                       = $data[0];
+		$this->in_reply_to_status_id    = $data[1];
+		$this->in_reply_to_user_id      = $data[2];
+		$this->retweeted_status_id      = $data[3];
+		$this->retweeted_status_user_id = $data[4];
+		$this->created_at               = date('Y-m-d H:i:s', strtotime($data[5]));
+		$this->source                   = $data[6];
+		$this->tweet                    = $data[7];
+		// Not included in CSV
+		$this->favorited                = 0;
+		$this->user_id                  = null;
+
+	}
 	
 	/**
 	 * Loads this object from an object (database row).

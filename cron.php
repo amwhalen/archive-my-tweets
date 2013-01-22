@@ -7,14 +7,23 @@ $isWeb = (isset($_GET['secret']) && $_GET['secret'] == TWITTER_CRON_SECRET);
 
 if ($isCLI || $isWeb) {
 
-	// create and backup
 	$tb = new ArchiveMyTweets(TWITTER_USERNAME, TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET, TWITTER_OAUTH_TOKEN, TWITTER_OAUTH_SECRET, DB_NAME, DB_TABLE_PREFIX, DB_HOST, DB_USERNAME, DB_PASSWORD);
-	$output = $tb->backup();
 
+	// API tweets
+	$output = $tb->backup();
 	if ($isWeb) {
 		echo '<pre>' . $output . '</pre>';
 	} else {
 		echo $output;
+	}
+
+	// Import JSON from an official twitter archive
+	// monthly .js files should be in a folder called 'json'
+	$importOutput = $tb->importJSON(dirname(__FILE__) . '/json');
+	if ($isWeb) {
+		echo '<pre>' . $importOutput . '</pre>';
+	} else {
+		echo $importOutput;
 	}
 
 } else {

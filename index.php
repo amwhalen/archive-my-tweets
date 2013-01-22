@@ -67,7 +67,7 @@ if ($tb->is_installed()) {
 		$client = $_GET['favorites'];
 		$tweets = $tb->get_favorite_tweets();
 		$header .= 'Favorite Tweets';
-	
+
 	} else {
 	
 		$current_page = (isset($_GET['page'])) ? $_GET['page']: 1;

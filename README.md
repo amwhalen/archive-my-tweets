@@ -39,6 +39,22 @@ The "secret" is so that only you can run the cron script instead of just any vis
 
 	0 * * * * /usr/bin/env curl --silent --compressed http://example.com/tweets/cron.php?secret=MY_SECRET
 
+Importing Your Official Twitter Archive
+---------------------------------------
+
+If you started using Archive My Tweets after you already had 3200 tweets, then you're in luck. It's now possible to import your older tweets from your downloaded twitter archive.
+
+Twitter now allows most accounts (they're still rolling this out) to download an official archive of all your tweets from the beginning of time. This is great news, and especially amazing is the JavaScript app they've included with it to browse and search your tweets.
+
+To import the archive follow these steps:
+
+1. Visit your Twitter account settings: [https://twitter.com/settings/account](https://twitter.com/settings/account)
+2. Near the bottom of the settings page there should be a button to download your archive. (If you don't see it yet, you may have to wait until it's rolled out to all accounts.)
+3. Once you've downloaded and unzipped your archive, copy all of the .js files in the data/js/tweets/ folder over to your server into the 'json' folder. [![js files](https://github.com/amwhalen/archive-my-tweets/img/jsfiles.png)]
+4. Manually run your cron.php file, or wait until your next scheduled update. Check for any errors in the output
+
+You'll only have to do this one time, as the cron.php running regularly will import all your newest tweets. Tweets that are already in your database will be ignored, so don't worry about duplication.
+
 Upgrading
 ---------
 
