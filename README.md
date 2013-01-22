@@ -3,6 +3,14 @@ Archive My Tweets
 
 Archive your tweets to easily browse and search them - all on your own website and in your control. See an example installation on my website: http://amwhalen.com/twitter/.
 
+Screenshots
+-----------
+
+[![js files](https://github.com/amwhalen/archive-my-tweets/master/img/screenshots/amt.png)]
+
+It's responsive!
+[![js files](https://github.com/amwhalen/archive-my-tweets/master/img/screenshots/amt_responsive.png)]
+
 Installation
 ------------
 
@@ -50,7 +58,7 @@ To import the archive follow these steps:
 
 1. Visit your Twitter account settings: [https://twitter.com/settings/account](https://twitter.com/settings/account)
 2. Near the bottom of the settings page there should be a button to download your archive. (If you don't see it yet, you may have to wait until it's rolled out to all accounts.)
-3. Once you've downloaded and unzipped your archive, copy all of the .js files in the data/js/tweets/ folder over to your server into the 'json' folder. [![js files](https://github.com/amwhalen/archive-my-tweets/img/jsfiles.png)]
+3. Once you've downloaded and unzipped your archive, copy all of the .js files in the data/js/tweets/ folder over to your server into the 'json' folder. [![js files](https://github.com/amwhalen/archive-my-tweets/master/img/screenshots/jsfiles.png)]
 4. Manually run your cron.php file, or wait until your next scheduled update. Check for any errors in the output
 
 You'll only have to do this one time, as the cron.php running regularly will import all your newest tweets. Tweets that are already in your database will be ignored, so don't worry about duplication.
@@ -79,7 +87,7 @@ License
 Archive My Tweets is released under the terms of the [MIT License](http://www.opensource.org/licenses/mit-license.html).
 
 The MIT License (MIT)
-Copyright (c) 2012 Andrew M. Whalen
+Copyright (c) 2013 Andrew M. Whalen
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
