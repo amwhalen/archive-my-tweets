@@ -91,6 +91,7 @@ FAQ
 
 * **Why don't my older tweets show up?** Twitter limits API calls to return only the most recent 3200 tweets from any user's timeline. See the Importing Your Official Twitter Archive section for a solution.
 
+* **My server doesn't have PHP 5.3.0 or higher, what can I do?** You can download the [old code that supports PHP 5.2 or higher](https://github.com/amwhalen/archive-my-tweets/archive/php52.zip). Beware that this code will not receive any updates.
 
 License
 -------
