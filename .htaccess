@@ -16,3 +16,6 @@ RewriteRule ^page/([0-9]+)/?$ index.php?page=$1 [L]
 
 # Favorites
 RewriteRule ^favorites/?$ index.php?favorites=1 [L]
+
+# Stats
+RewriteRule ^stats/?$ index.php?method=stats [L]

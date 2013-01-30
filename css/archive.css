@@ -14,23 +14,27 @@ body {
 	height: 20px;
 }
 
-
-/*-- tweets ----------------------------------------------- */
-
-#tweets {
+.rounded {
+	padding: 30px;
 	background: #fff;
 	border: 1px solid #e5e5e5;
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
 	border-radius: 5px;
-	padding: 30px 0;
 }
 
-#tweets .page-header {
+.rounded .page-header {
 	margin-top: -15px;
 	margin-bottom: 20px;
 	padding-left: 30px;
 	padding-right: 30px;
+}
+
+
+/*-- tweets ----------------------------------------------- */
+
+#tweets {
+	padding: 30px 0;
 }
 
 #tweets .tweet {
@@ -151,12 +155,7 @@ body {
 
 #sidebar .widget {
 	margin: 0 0 30px 0;
-	background: #fff;
 	padding: 0;
-	border: 1px solid #e5e5e5;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
-	border-radius: 5px;
 }
 
 #sidebar .widget h3 {

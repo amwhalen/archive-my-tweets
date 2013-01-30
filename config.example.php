@@ -1,5 +1,8 @@
 <?php
 
+// timezone, see: http://php.net/manual/en/timezones.php
+date_default_timezone_set(''); // e.g. America/New_York
+
 // twitter
 define('TWITTER_USERNAME', ''); // e.g. awhalen
 define('TWITTER_NAME',     ''); // e.g. Andrew M. Whalen

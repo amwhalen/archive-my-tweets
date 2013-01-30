@@ -3,3 +3,4 @@ config.php
 *~
 *.swo
 *.swp
+coverage

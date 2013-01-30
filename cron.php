@@ -1,5 +1,9 @@
 <?php
 
+if (!file_exists(dirname(__FILE__).'/config.php')) {
+	die("Missing config.php file. Copy config.example.php to config.php and customize the settings.\n");
+}
+
 require_once('includes.php');
 
 $isCLI = (php_sapi_name() == 'cli' && empty($_SERVER['REMOTE_ADDR']));
@@ -7,19 +11,19 @@ $isWeb = (isset($_GET['secret']) && $_GET['secret'] == TWITTER_CRON_SECRET);
 
 if ($isCLI || $isWeb) {
 
-	$tb = new ArchiveMyTweets(TWITTER_USERNAME, TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET, TWITTER_OAUTH_TOKEN, TWITTER_OAUTH_SECRET, DB_NAME, DB_TABLE_PREFIX, DB_HOST, DB_USERNAME, DB_PASSWORD);
+	$amt = new \AMWhalen\ArchiveMyTweets\App($config);
 
 	// API tweets
-	$output = $tb->backup();
+	$archiveOutput = $amt->archive();
 	if ($isWeb) {
-		echo '<pre>' . $output . '</pre>';
+		echo '<pre>' . $archiveOutput . '</pre>';
 	} else {
-		echo $output;
+		echo $archiveOutput;
 	}
 
 	// Import JSON from an official twitter archive
 	// monthly .js files should be in a folder called 'json'
-	$importOutput = $tb->importJSON(dirname(__FILE__) . '/json');
+	$importOutput = $amt->importJSON(dirname(__FILE__) . '/json');
 	if ($isWeb) {
 		echo '<pre>' . $importOutput . '</pre>';
 	} else {

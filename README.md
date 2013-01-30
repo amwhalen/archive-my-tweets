@@ -5,31 +5,36 @@ Archive your tweets to easily browse and search them - all on your own website a
 
 ![archive my tweets](https://raw.github.com/amwhalen/archive-my-tweets/master/img/screenshots/amt.png)
 
+Server Requirements
+-------------------
+
+* PHP 5.3.0 or higher with cURL and PDO
+* MySQL
+
+
 Installation
 ------------
 
-1. Download the archive-my-tweets source code and put it into a directory on your LAMP web server (e.g. /tweets/).
-2. Copy config.example.php to config.php and edit it so it contains your Twitter info and tokens (see below), database info, and cron secret key.
-3. Visit /tweets/cron.php?secret=YOUR-CRON-SECRET-KEY to install and load your tweets.
-4. Go to /tweets/ to view and search your tweets.
+1. [Download the archive-my-tweets source code](https://github.com/amwhalen/archive-my-tweets/archive/master.zip), unzip it, and upload it into a directory on your LAMP web server (e.g. /tweets/).
+2. Visit the installation location in your web browser, e.g. http://www.example.com/tweets/.
+3. Fill out the form with your information and save. That's it!
+
 
 Getting Twitter API Tokens
 --------------------------
+
+Installation requires that you register your "app" with Twitter. Below is the process:
 
 1. Visit https://dev.twitter.com/apps/new and sign in with your Twitter credentials.
 2. Fill in the Name and Description with whatever you'd like.
 3. Fill in the Website and Callback fields with the URL of your twitter archive, e.g. http://amwhalen.com/twitter/.
 4. Save your information and put the keys and tokens into your config.php file.
 
-Profile Picture
----------------
-
-You can replace the file img/avatar.png with your own profile picture. It should be sized at 73x73 pixels. If you want to use a different file name, just change the location of the image in the index.php file.
 
 Setting Up a Cron Job
 ---------------------
 
-If you want to automatically update your tweets you'll need to set up a cron job. You can find more information on Cron elsewhere, but here's an example that run your cron.php every hour of the day:
+If you want to automatically update your tweets you'll need to set up a cron job. You can find more information on Cron elsewhere, but here's an example that will run your cron.php every hour of the day:
 
 	0 * * * * /usr/bin/env php /path/to/the/cron.php
 
@@ -40,6 +45,7 @@ If you want to set up the cron job to run remotely, use this instead:
 The "secret" is so that only you can run the cron script instead of just any visitor. This will protect your Twitter API limit (350 requests per hour), which is tied to your username. If you don't have wget installed on your server, you could try to use cURL instead:
 
 	0 * * * * /usr/bin/env curl --silent --compressed http://example.com/tweets/cron.php?secret=MY_SECRET
+
 
 Importing Your Official Twitter Archive
 ---------------------------------------
@@ -59,6 +65,7 @@ To import the archive follow these steps:
 
 You'll only have to do this one time, as the cron.php running regularly will import all your newest tweets. Tweets that are already in your database will be ignored, so don't worry about duplication.
 
+
 Upgrading
 ---------
 
@@ -68,6 +75,13 @@ If you're running from a cloned copy from GitHub, just do a 'git pull' to grab t
 
 Whichever method you choose, just remember to keep your customized config.php file in place.
 
+
+Profile Picture
+---------------
+
+You can replace the file img/avatar.png with your own profile picture. If you want to use a different file name, just change the location of the image in the themes/default/_layout.php file.
+
+
 FAQ
 ---
 
@@ -75,7 +89,8 @@ FAQ
 
 * **Why is my cron.php page blank when I access it?** Your server may need cURL support in PHP. See the [PHP Docs for installing cURL](http://www.php.net/manual/en/curl.setup.php).
 
-* **Why don't my older tweets show up?** Twitter limits API calls to return only the most recent 3200 tweets from any user's timeline. See the [Twitter API Documentation](https://dev.twitter.com/docs/api/1.1/get/statuses/user_timeline).
+* **Why don't my older tweets show up?** Twitter limits API calls to return only the most recent 3200 tweets from any user's timeline. See the Importing Your Official Twitter Archive section for a solution.
+
 
 License
 -------
