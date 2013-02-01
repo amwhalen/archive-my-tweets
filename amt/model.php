@@ -75,11 +75,15 @@ class Model {
 
 	}
 
-	public function getSearchResults($k, $offset=0, $perPage=50) {
+	public function getSearchResults($k, $offset=0, $perPage=50, $count=false) {
 	
 		if (trim($k) == '') return false;
 	
-		$sql  = 'select * from '.$this->table.' where 1 ';
+		if ($count) {
+			$sql  = 'select count(*) as total from '.$this->table.' where 1 ';
+		} else {
+			$sql  = 'select * from '.$this->table.' where 1 ';
+		}
 		
 		// split out the quoted items
 		// $phrases[0] is an array of full pattern matches (quotes intact)
@@ -102,17 +106,29 @@ class Model {
 			}
 		}
 		$sql = rtrim($sql, " or "); // remove that dangling "or"
-		$sql .= ') order by id desc limit :offset,:perPage';
+		$sql .= ') order by id desc';
+
+		if (!$count) {
+			$sql .= ' limit :offset,:perPage';
+		}
 
 		// bind each search term
 		$stmt = $this->db->prepare($sql);
 		foreach ($wordParams as $key=>$param) {
 			$stmt->bindValue($key, $param, PDO::PARAM_STR);
 		}
-		$stmt->bindValue(':offset',  (int) $offset,  PDO::PARAM_INT);
-		$stmt->bindValue(':perPage', (int) $perPage, PDO::PARAM_INT);
+		if (!$count) {
+			$stmt->bindValue(':offset',  (int) $offset,  PDO::PARAM_INT);
+			$stmt->bindValue(':perPage', (int) $perPage, PDO::PARAM_INT);
+		}
 		$stmt->execute();
-		return $stmt->fetchAll();
+
+		if ($count) {
+			$row = $stmt->fetch();
+			return $row['total'];
+		} else {
+			return $stmt->fetchAll();
+		}
 	
 	}
 
@@ -138,14 +154,35 @@ class Model {
 
 	}
 
+	public function getTweetsByMonthCount($year, $month) {
+
+		$stmt = $this->db->prepare('select count(*) as total from '.$this->table.' where year(created_at)=:year and month(created_at)=:month order by id desc');
+		$stmt->bindValue(':year',    (int) $year,    PDO::PARAM_INT);
+		$stmt->bindValue(':month',   (int) $month,   PDO::PARAM_INT);
+		$stmt->execute();
+		$row = $stmt->fetch();
+		return $row['total'];
+
+	}
+
 	public function getTweetsByClient($client, $offset=0, $perPage=50) {
 
-		$stmt = $this->db->prepare('select * from '.$this->table.' where source REGEXP "<a.*>:client</a>" order by id desc');
+		$stmt = $this->db->prepare('select * from '.$this->table.' where source REGEXP CONCAT("(<a.*>)?", :client, "(</a>)?") order by id desc limit :offset,:perPage');
 		$stmt->bindValue(':client',        $client,  PDO::PARAM_STR);
 		$stmt->bindValue(':offset',  (int) $offset,  PDO::PARAM_INT);
 		$stmt->bindValue(':perPage', (int) $perPage, PDO::PARAM_INT);
 		$stmt->execute();
 		return $stmt->fetchAll();
+
+	}
+
+	public function getTweetsByClientCount($client) {
+
+		$stmt = $this->db->prepare('select count(*) as total from '.$this->table.' where source REGEXP CONCAT("(<a.*>)?", :client, "(</a>)?")');
+		$stmt->bindValue(':client',        $client,  PDO::PARAM_STR);
+		$stmt->execute();
+		$row = $stmt->fetch();
+		return $row['total'];
 
 	}
 

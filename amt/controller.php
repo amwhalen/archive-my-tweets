@@ -32,6 +32,9 @@ class Controller {
 		$this->data['maxClients']          = $this->model->getMostPopularClientTotal();
 		$perPage = 50;
 
+		$current_page = (isset($_GET['page'])) ? $_GET['page']: 1;
+		$offset = ($current_page > 1) ? (($current_page-1) * $perPage) : 0;
+
 		// the big switch. this decides what to show on the page.
 		if (isset($_GET['id'])) {
 		
@@ -48,7 +51,10 @@ class Controller {
 			$this->data['pageType'] = 'search';
 			$this->data['search'] = true;
 			$this->data['searchTerm'] = $searchTerm;
-			$this->data['tweets'] = $this->model->getSearchResults($searchTerm);
+			$this->data['tweets'] = $this->model->getSearchResults($searchTerm, $offset, $perPage);
+			$this->data['totalTweetsForSearch'] = $this->model->getSearchResults($searchTerm, $offset, $perPage, true);
+			$pageBaseUrl = $this->data['config']['system']['baseUrl'].'?q='.urlencode($searchTerm);
+			$this->data['pagination'] = $this->paginator->paginate($pageBaseUrl, $this->data['totalTweetsForSearch'], $current_page, $perPage, false);
 			$header = 'Search <small>'.$searchTerm.'</small>';
 			$this->data['header'] = $header;
 		
@@ -59,7 +65,10 @@ class Controller {
 			$this->data['monthly_archive'] = true;
 			$this->data['archive_year'] = $_GET['year'];
 			$this->data['archive_month'] = $_GET['month'];
-			$this->data['tweets'] = $this->model->getTweetsByMonth($this->data['archive_year'], $this->data['archive_month'], 0, 1000);
+			$this->data['tweets'] = $this->model->getTweetsByMonth($this->data['archive_year'], $this->data['archive_month'], $offset, $perPage);
+			$this->data['totalTweetsByMonth'] = $this->model->getTweetsByMonthCount($this->data['archive_year'], $this->data['archive_month']);
+			$pageBaseUrl = $this->data['config']['system']['baseUrl'].'archive/'.urlencode($this->data['archive_year']).'/'.urlencode($this->data['archive_month']).'/';
+			$this->data['pagination'] = $this->paginator->paginate($pageBaseUrl, $this->data['totalTweetsByMonth'], $current_page, $perPage);
 			$this->data['header'] = date('F Y', strtotime($this->data['archive_year'].'-'.$this->data['archive_month'].'-01'));
 		
 		} else if (isset($_GET['client'])) {
@@ -68,7 +77,10 @@ class Controller {
 			$this->data['pageType'] = 'client_archive';
 			$this->data['per_client_archive'] = true;
 			$this->data['client'] = $_GET['client'];
-			$this->data['tweets'] = $this->model->getTweetsByClient($this->data['client']);
+			$this->data['tweets'] = $this->model->getTweetsByClient($this->data['client'], $offset, $perPage);
+			$this->data['totalTweetsByClient'] = $this->model->getTweetsByClientCount($this->data['client']);
+			$pageBaseUrl = $this->data['config']['system']['baseUrl'].'client/'.urlencode($this->data['client']).'/';
+			$this->data['pagination'] = $this->paginator->paginate($pageBaseUrl, $this->data['totalTweetsByClient'], $current_page, $perPage);
 			$this->data['header'] .= 'Tweets from '.$this->data['client'];
 
 		} else if (isset($_GET['favorites'])) {
@@ -77,16 +89,15 @@ class Controller {
 			$this->data['pageType'] = 'favorites';
 			$this->data['favorite_tweets'] = true;
 			$this->data['client'] = $_GET['favorites'];
-			$this->data['tweets'] = $this->model->getFavoriteTweets();
+			$this->data['tweets'] = $this->model->getFavoriteTweets($offset, $perPage);
+			$pageBaseUrl = $this->data['config']['system']['baseUrl'].'favorites/';
+			$this->data['pagination'] = $this->paginator->paginate($pageBaseUrl, $this->data['totalFavoriteTweets'], $current_page, $perPage);
 			$this->data['header'] .= 'Favorite Tweets';
 
 		} else {
 		
 			// default view: show all the tweets
-			$this->data['pageType'] = 'recent';
-			$current_page = (isset($_GET['page'])) ? $_GET['page']: 1;
-			$offset = ($current_page > 1) ? (($current_page-1) * $perPage) : 0;
-		
+			$this->data['pageType'] = 'recent';		
 			$this->data['all_tweets'] = true;
 			$this->data['tweets'] = $this->model->getTweets($offset, $perPage);
 			$this->data['pagination'] = $this->paginator->paginate($this->data['config']['system']['baseUrl'], $this->data['totalTweets'], $current_page, $perPage);

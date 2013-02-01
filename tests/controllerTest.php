@@ -38,17 +38,16 @@ class ControllerTest extends \PHPUnit_Framework_TestCase {
 		// model returns latest tweet
 		$this->model->expects($this->any())->method('getTweet')->will($this->returnValue($this->latestTweet));
 
-		// search
-		$this->model->expects($this->any())->method('getSearchResults')->will($this->returnValue($this->recentTweets));
-
 		// by client
 		$this->model->expects($this->any())->method('getTweetsByClient')->will($this->returnValue($this->recentTweets));
+		$this->model->expects($this->any())->method('getTweetsByClientCount')->will($this->returnValue(1));
 
 		// favorites
 		$this->model->expects($this->any())->method('getFavoriteTweets')->will($this->returnValue($this->recentTweets));
 
-		// search
+		// month
 		$this->model->expects($this->any())->method('getTweetsByMonth')->will($this->returnValue($this->recentTweets));
+		$this->model->expects($this->any())->method('getTweetsByMonthCount')->will($this->returnValue(1));
 
 		// months
 		$this->model->expects($this->any())->method('getTwitterMonths')->will($this->returnValue(array()));
@@ -92,8 +91,17 @@ class ControllerTest extends \PHPUnit_Framework_TestCase {
 		// preconditions
 		$_GET['q'] = 'aardvark';
 
+		$model = $this->model;
+
+		// search
+		// calls 0-6 are at the top of the index() controller method
+		$model->expects($this->at(7))->method('getSearchResults')->will($this->returnValue($this->recentTweets));
+		$model->expects($this->at(8))->method('getSearchResults')->will($this->returnValue(1));
+
+		$controller = new Controller($model, $this->view, $this->paginator);
+
 		ob_start();
-		$this->controller->index();
+		$controller->index();
 		$output = ob_get_clean();
 
 		$this->assertTrue($this->didFindString($output, 'amt-search'));

@@ -5,17 +5,24 @@ RewriteRule ^([0-9]+)/?$ index.php?id=$1 [L]
 
 # Tweets by date
 RewriteRule ^archive/([0-9]{4})/([0-9]{2})/([0-9]{2})/?$ index.php?year=$1&month=$2&day=$3 [L]
+RewriteRule ^archive/([0-9]{4})/([0-9]{2})/([0-9]{2})/page/([0-9]+)/?$ index.php?year=$1&month=$2&day=$3&page=$4 [L]
+
 RewriteRule ^archive/([0-9]{4})/([0-9]{2})/?$ index.php?year=$1&month=$2 [L]
+RewriteRule ^archive/([0-9]{4})/([0-9]{2})/page/([0-9]+)/?$ index.php?year=$1&month=$2&page=$3 [L]
+
 RewriteRule ^archive/([0-9]{4})/?$ index.php?year=$1 [L]
+RewriteRule ^archive/([0-9]{4})/page/([0-9]+)/?$ index.php?year=$1&page=$2 [L]
 
 # Tweets by client
 RewriteRule ^client/(.*)/$ index.php?client=$1 [L]
+RewriteRule ^client/(.*)/page/([0-9]+)/?$ index.php?client=$1&page=$2 [L]
 
 # Paginated Index
 RewriteRule ^page/([0-9]+)/?$ index.php?page=$1 [L]
 
 # Favorites
 RewriteRule ^favorites/?$ index.php?favorites=1 [L]
+RewriteRule ^favorites/page/([0-9]+)/?$ index.php?favorites=1&page=$2 [L]
 
 # Stats
 RewriteRule ^stats/?$ index.php?method=stats [L]
