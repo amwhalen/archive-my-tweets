@@ -4,6 +4,7 @@ namespace AMWhalen\ArchiveMyTweets;
 
 class ArchiverTest extends \PHPUnit_Framework_TestCase {
 
+	protected $username;
 	protected $model;
 	protected $twitter;
 	protected $latestTweet;
@@ -43,37 +44,24 @@ class ArchiverTest extends \PHPUnit_Framework_TestCase {
 			)
 		);
 
-	}
-
-	public function testOneNewTweet() {
-
-		$model = $this->getModelThatReturns(1);
-		$twitter = $this->getTwitterReturnsOneTweet();
-
-		$archiver = new Archiver($twitter, $model);
-		$output = $archiver->archive();
-
-		$this->assertTrue($this->didFindString($output, 'Got 1 results on page 1. (Some tweets may have been filtered out.)'));
-		$this->assertTrue($this->didFindString($output, '1 new tweet over 2 queries.'));
-
-		// this shouldn't appear as we're pretending that there's no latest tweet in the DB
-		$this->assertFalse($this->didFindString($output, 'Getting tweets with an id greater than'));
+		$this->username = 'awhalen';
 
 	}
 
-	public function testGetFromLatestId() {
+	public function testDecrement64BitInteger() {
 
 		$model = $this->getModelThatReturns(1);
-		$twitter = $this->getTwitterReturnsOneTweet();
+		$twitter = $this->getMockTwitter();
 
-		$model->expects($this->any())
-			->method('getLatestTweet')
-			->will($this->returnValue($this->latestTweet));
+		$archiver = new Archiver($this->username, $twitter, $model);
 
-		$archiver = new Archiver($twitter, $model);
-		$output = $archiver->archive();
-
-		$this->assertTrue($this->didFindString($output, 'Getting tweets with an id greater than'));
+		$this->assertEquals("1", $archiver->decrement64BitInteger(2));
+		$this->assertEquals("0", $archiver->decrement64BitInteger(1));
+		$this->assertEquals("-1", $archiver->decrement64BitInteger(0));
+		$this->assertEquals("293780221621067775", $archiver->decrement64BitInteger("293780221621067776"));
+		$this->assertEquals("-293780221621067777", $archiver->decrement64BitInteger("-293780221621067776"));
+		$this->assertEquals("293780221621067779", $archiver->decrement64BitInteger("293780221621067780"));
+		$this->assertEquals("-293780221621067780", $archiver->decrement64BitInteger("-293780221621067779"));
 
 	}
 
@@ -82,7 +70,7 @@ class ArchiverTest extends \PHPUnit_Framework_TestCase {
 		$model = $this->getModelThatReturns(false);
 		$twitter = $this->getTwitterReturnsOneTweet();
 
-		$archiver = new Archiver($twitter, $model);
+		$archiver = new Archiver($this->username, $twitter, $model);
 		$output = $archiver->archive();
 		
 		$this->assertTrue($this->didFindString($output, 'ERROR INSERTING TWEETS INTO DATABASE'));
@@ -94,10 +82,27 @@ class ArchiverTest extends \PHPUnit_Framework_TestCase {
 		$model = $this->getModelThatReturns(0);
 		$twitter = $this->getTwitterReturnsNoTweets();
 
-		$archiver = new Archiver($twitter, $model);
+		$archiver = new Archiver($this->username, $twitter, $model);
 		$output = $archiver->archive();
 
-		$this->assertTrue($this->didFindString($output, 'No tweets on page 1.'));
+		$this->assertTrue($this->didFindString($output, 'NO tweets on page 1'));
+
+	}
+
+	public function testTooManyExceptions() {
+
+		$model = $this->getModelThatReturns(1);
+
+		// Throw exceptions forever
+		$twitter = $this->getMockTwitter();
+		$twitter->expects($this->any())
+			->method('statusesUserTimeline')
+			->will($this->throwException(new \Exception('Fake Twitter API Exception!')));
+
+		$archiver = new Archiver($this->username, $twitter, $model);
+		$output = $archiver->archive();
+
+		$this->assertTrue($this->didFindString($output, 'Too many connection errors.'));
 
 	}
 
@@ -106,7 +111,7 @@ class ArchiverTest extends \PHPUnit_Framework_TestCase {
 		$model = $this->getModelThatReturns(1);
 		$twitter = $this->getTwitterThrowsException();
 
-		$archiver = new Archiver($twitter, $model);
+		$archiver = new Archiver($this->username, $twitter, $model);
 		$output = $archiver->archive();
 
 		$this->assertTrue($this->didFindString($output, 'Exception:'));
@@ -118,7 +123,7 @@ class ArchiverTest extends \PHPUnit_Framework_TestCase {
 		$model = $this->getModelThatReturns(0);
 		$twitter = $this->getTwitterReturnsOneTweet();
 
-		$archiver = new Archiver($twitter, $model);
+		$archiver = new Archiver($this->username, $twitter, $model);
 		$output = $archiver->archive();
 
 		$this->assertTrue($this->didFindString($output, 'Zero tweets added.'));
@@ -130,11 +135,10 @@ class ArchiverTest extends \PHPUnit_Framework_TestCase {
 		$model = $this->getModelThatReturns(0);
 		$twitter = $this->getTwitterReturns200Tweets();
 
-		$archiver = new Archiver($twitter, $model);
+		$archiver = new Archiver($this->username, $twitter, $model);
 		$output = $archiver->archive();
 
-		$this->assertTrue($this->didFindString($output, 'Got 200 results on page 1.'));
-		$this->assertFalse($this->didFindString($output, '(Some tweets may have been filtered out.)'));
+		$this->assertTrue($this->didFindString($output, '200 tweets on page 1'));
 
 	}
 
@@ -167,18 +171,13 @@ class ArchiverTest extends \PHPUnit_Framework_TestCase {
 	protected function getMockTwitter() {
 
 		// Create a Mock Object for the Twitter class
-		$twitter = $this->getMockBuilder('Twitter')
+		$twitter = $this->getMockBuilder('TijsVerkoyen\Twitter\Twitter')
 			->disableOriginalConstructor()
 			->getMock();
 
-		// accountRateLimitStatus
 		$twitter->expects($this->any())
-			->method('accountRateLimitStatus')
-			->will($this->returnValue(array(
-				'remaining_hits' => 145,
-				'hourly_limit'   => 150,
-				'reset_time'     => 'Sun Jan 27 03:04:44 +0000 2013'
-			)));
+			->method('getLastRateLimitStatus')
+			->will($this->returnValue(array('remaining'=>180,'limit'=>180)));
 
 		return $twitter;
 
@@ -197,7 +196,7 @@ class ArchiverTest extends \PHPUnit_Framework_TestCase {
 			->will($this->returnValue($this->arrayOfTweets));
 
 		// Calling $twitter->statusesUserTimeline() will return an empty array the second time
-		$twitter->expects($this->at(1))
+		$twitter->expects($this->at(2))
 			->method('statusesUserTimeline')
 			->will($this->returnValue(array()));
 
@@ -218,7 +217,7 @@ class ArchiverTest extends \PHPUnit_Framework_TestCase {
 			->will($this->returnValue(array($this->latestTweet)));
 
 		// Calling $twitter->statusesUserTimeline() will return an empty array the second time
-		$twitter->expects($this->at(1))
+		$twitter->expects($this->at(2))
 			->method('statusesUserTimeline')
 			->will($this->returnValue(array()));
 
@@ -227,11 +226,13 @@ class ArchiverTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * Sets the mock Twitter object to return 1 tweet on the first page, exception on second, and return zero on the third page
+	 * Sets the mock Twitter object to return 1 tweet on the first request, exception on second, and return zero on the third
 	 */
 	protected function getTwitterThrowsException() {
 
 		$twitter = $this->getMockTwitter();
+
+		// remember to include the calls to getLastRateLimitStatus() for the at() indexes
 
 		// Calling $twitter->statusesUserTimeline() will return an array the first time
 		$twitter->expects($this->at(0))
@@ -239,12 +240,12 @@ class ArchiverTest extends \PHPUnit_Framework_TestCase {
 			->will($this->returnValue($this->arrayOfTweets));
 
 		// Throw an exception!
-		$twitter->expects($this->at(1))
+		$twitter->expects($this->at(2))
 			->method('statusesUserTimeline')
-			->will($this->returnCallback(function() { Throw new \Exception('Twitter API Exception!'); }));
+			->will($this->throwException(new \Exception('Fake Twitter API Exception!')));
 
 		// Calling $twitter->statusesUserTimeline() will return an empty array the second time
-		$twitter->expects($this->at(2))
+		$twitter->expects($this->at(4))
 			->method('statusesUserTimeline')
 			->will($this->returnValue(array()));
 
@@ -286,7 +287,7 @@ class ArchiverTest extends \PHPUnit_Framework_TestCase {
 			->will($this->returnValue($lotsOfTweets));
 
 		// Calling $twitter->statusesUserTimeline() will return an empty array the second time
-		$twitter->expects($this->at(1))
+		$twitter->expects($this->at(2))
 			->method('statusesUserTimeline')
 			->will($this->returnValue(array()));
 

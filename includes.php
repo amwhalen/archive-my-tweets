@@ -9,7 +9,8 @@ require_once 'amt/importer.php';
 require_once 'amt/archiver.php';
 require_once 'amt/app.php';
 require_once 'amt/tweet.php';
-require_once 'amt/twitter.php';
+require_once 'vendor/tijsverkoyen/TwitterOAuth/Twitter.php';
+require_once 'vendor/tijsverkoyen/TwitterOAuth/Exception.php';
 
 if (file_exists(dirname(__FILE__).'/config.php')) {
 	require_once 'config.php';

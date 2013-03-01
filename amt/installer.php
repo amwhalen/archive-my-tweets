@@ -5,7 +5,8 @@ use DateTimeZone;
 
 require_once dirname(__FILE__).'/view.php';
 require_once dirname(__FILE__).'/model.php';
-require_once dirname(__FILE__).'/twitter.php';
+require_once dirname(__FILE__).'/../vendor/tijsverkoyen/TwitterOAuth/Twitter.php';
+require_once dirname(__FILE__).'/../vendor/tijsverkoyen/TwitterOAuth/Exception.php';
 require_once dirname(__FILE__).'/archiver.php';
 
 /**
@@ -96,11 +97,13 @@ class Installer {
 
 			// test twitter connection
 			if (!$installProblem) {
-				$this->twitter = new \Twitter($this->data['form']['consumerKey'], $this->data['form']['consumerSecret']);
+
+				$this->twitter = new \TijsVerkoyen\Twitter\Twitter($this->data['form']['consumerKey'], $this->data['form']['consumerSecret']);
 				$this->twitter->setOAuthToken($this->data['form']['oauthToken']);
 				$this->twitter->setOAuthTokenSecret($this->data['form']['oauthSecret']);
+
 				try {
-					$tweetResults = $this->twitter->statusesUserTimeline();
+					$tweetResults = $this->twitter->statusesUserTimeline(null, $this->data['form']['twitterUsername']);
 				} catch (\Exception $e) {
 					$installProblem = true;
 					$this->data['twitterErrors'] = 'There was a problem connecting to twitter: ' . $e->getMessage();
@@ -150,7 +153,7 @@ class Installer {
 	public function step2() {
 
 		// run the archiver
-		$archiver = new Archiver($this->twitter, $this->model);
+		$archiver = new Archiver($this->data['form']['twitterUsername'], $this->twitter, $this->model);
 		$this->data['archiverOutput'] = $archiver->archive();
 
 		$this->data['content'] = $this->view->render('install02.php', $this->data, true);
