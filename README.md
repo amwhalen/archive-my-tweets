@@ -8,7 +8,7 @@ Archive your tweets to easily browse and search them - all on your own website a
 Server Requirements
 -------------------
 
-* PHP 5.3.0 or higher with cURL and PDO
+* PHP 5.3.0+ with cURL and PDO
 * MySQL
 
 
@@ -71,7 +71,7 @@ Upgrading
 
 Just replace all of the old files with the new files. If you're using an FTP client, the easiest way is to upload and overwrite the entire directory.
 
-If you're running from a cloned copy from GitHub, just do a 'git pull' to grab the latest code.
+If you're running a cloned copy from GitHub, just do a 'git pull' to grab the latest code.
 
 Whichever method you choose, just remember to keep your customized config.php file in place.
 
