@@ -310,6 +310,11 @@ class Installer {
 			$problems['warnings'][] = 'Your version of PHP is missing the <code>json_decode()</code> function. This is included and enabled by default for PHP versions 5.2.0 and higher. This is only required if you want to import tweets from an official twitter archive download, otherwise Archive My Tweets can run without it.';
 		}
 
+		// Optional: 64-bit integers
+		if (PHP_INT_SIZE != 8) {
+			$problems['warnings'][] = 'Your PHP installation does not support 64 bit integers and this may cause problems for you. Support for 64 bit integers is recommended and is offered by most modern web hosts.';
+		}
+
 		return $problems;
 
 	}

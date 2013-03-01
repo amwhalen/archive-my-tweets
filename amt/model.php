@@ -14,7 +14,8 @@ class Model {
 	/**
 	 * Constructor
 	 *
-	 * @param $config array Expects an associative array with 'host', 'database', 'username', 'password', and 'prefix' keys
+	 * @param $db A PDO instance.
+	 * @param $prefix The table prefix.
 	 */
 	public function __construct($db, $prefix) {
 		$this->db = $db;
@@ -36,7 +37,7 @@ class Model {
 	public function getTweet($id) {
 
 		$stmt = $this->db->prepare("select * from ".$this->table." where id=:id limit 1");
-		$stmt->bindValue(':id', (int) $id, PDO::PARAM_INT);
+		$stmt->bindValue(':id', $id, PDO::PARAM_INT);
 		$status = $stmt->execute();
 
 		if ($status && $stmt->rowCount()) {
@@ -264,16 +265,16 @@ class Model {
 			$params = array();
 			$values = array();
 			foreach ($tweets as $t) {
-				$params[':id'.$i] = (int) $t->id;
-				$params[':user_id'.$i] = (int) $t->user_id;
+				$params[':id'.$i] = $t->id;
+				$params[':user_id'.$i] = $t->user_id;
 				$params[':created_at'.$i] = $t->created_at;
 				$params[':tweet'.$i] = $t->tweet;
 				$params[':source'.$i] = $t->source;
-				$params[':truncated'.$i] = (int) $t->truncated;
-				$params[':favorited'.$i] = (int) $t->favorited;
-				$params[':in_reply_to_status_id'.$i] = (int) $t->in_reply_to_status_id;
-				$params[':in_reply_to_user_id'.$i] = (int) $t->in_reply_to_user_id;
-				$params[':in_reply_to_screen_name'.$i] = (int) $t->in_reply_to_screen_name;
+				$params[':truncated'.$i] = $t->truncated;
+				$params[':favorited'.$i] = $t->favorited;
+				$params[':in_reply_to_status_id'.$i] = $t->in_reply_to_status_id;
+				$params[':in_reply_to_user_id'.$i] = $t->in_reply_to_user_id;
+				$params[':in_reply_to_screen_name'.$i] = $t->in_reply_to_screen_name;
 				$values[] = '(:id'.$i.',:user_id'.$i.',:created_at'.$i.',:tweet'.$i.',:source'.$i.',:truncated'.$i.',:favorited'.$i.',:in_reply_to_status_id'.$i.',:in_reply_to_user_id'.$i.',:in_reply_to_screen_name'.$i.')';
 				$i++;
 			}
@@ -281,9 +282,22 @@ class Model {
 			// join all the value groups together: values(1,2,3),(4,5,6),(6,7,8)
 			$sql .= implode(",", $values);
 
+			// integer params
+			$intParamKeys = array(':id', ':user_id', ':in_reply_to_status_id', ':in_reply_to_user_id', ':in_reply_to_screen_name');
+
 			$stmt = $this->db->prepare($sql);
+			$paramType = PDO::PARAM_STR;
 			foreach ($params as $key=>$value) {
-				$stmt->bindValue($key, $value);
+				// some params are ints that need to be bound correctly
+				foreach ($intParamKeys as $intK) {
+					if (substr($key, 0, strlen($intK)) == $intK) {
+						$paramType = PDO::PARAM_INT;
+						break;
+					} else {
+						$paramType = PDO::PARAM_STR;
+					}
+				}
+				$stmt->bindValue($key, $value, $paramType);
 			}
 			$status = $stmt->execute();
 			return $stmt->rowCount();
