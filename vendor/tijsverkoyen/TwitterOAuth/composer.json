@@ -1,0 +1,22 @@
+{
+	"name": "tijsverkoyen/twitteroauth",
+	"type": "library",
+	"description": "PHP Twitter is a (wrapper)class to communicate with Twitter.",
+	"homepage": "https://github.com/tijsverkoyen/TwitterOAuth",
+	"license": "BSD",
+	"authors": [
+		{
+			"name": "Tijs Verkoyen",
+			"email": "php-twitter@verkoyen.eu",
+			"role": "Developer"
+		}
+	],
+	"require": {
+		"php": ">=5.2.0",
+		"ext-curl": "*"
+	},
+	"target-dir": "TijsVerkoyen/Twitter",
+	"autoload": {
+		"psr-0": {"TijsVerkoyen\\Twitter": ""}
+	}
+}
