@@ -1,4 +1,3 @@
-
 <!-- index -->
 
 			<div class="span8">
@@ -26,9 +25,9 @@
 								<?php echo $t->get_linked_tweet(); ?>
 							</p>
 							<p class="meta">
-								<a href="<?php echo ($single_tweet ? 'http://twitter.com/'.$config['twitter']['username'].'/status/' : $config['system']['baseUrl']).$t->id; ?>/" rel="bookmark"><?php echo $t->get_date(); ?></a>
+								<a href="<?php echo ($single_tweet ? 'https://twitter.com/'.$config['twitter']['username'].'/status/' : $config['system']['baseUrl']).$t->id; ?>/" rel="bookmark"><?php echo $t->get_date(); ?></a>
 								via
-								<?php echo $t->source; echo ($t->in_reply_to_status_id != 0) ? ' <a href="http://twitter.com/'.$t->in_reply_to_screen_name.'/status/'.$t->in_reply_to_status_id.'">in reply to '.$t->in_reply_to_screen_name.'</a>' : ''; ?>
+								<?php echo $t->source; echo ($t->in_reply_to_status_id != 0) ? ' <a href="https://twitter.com/'.$t->in_reply_to_screen_name.'/status/'.$t->in_reply_to_status_id.'">in reply to '.$t->in_reply_to_screen_name.'</a>' : ''; ?>
 							</p>
 						</div>
 					
