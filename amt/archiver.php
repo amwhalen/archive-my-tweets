@@ -108,10 +108,12 @@ class Archiver {
 
 				// check if we've reached the rate limit
 				$rate = $this->twitter->getLastRateLimitStatus();
-				$str .= $rate['remaining'] . '/' . $rate['limit'] . "\n";
-				if ($rate['remaining'] <= 0) {
-					$str .= 'API limit reached. Try again later.' . "\n";
-					$gotResults = false;
+				if (isset($rate['remaining']) && isset($rate['limit'])) {
+					$str .= $rate['remaining'] . '/' . $rate['limit'] . "\n";
+					if ($rate['remaining'] <= 0) {
+						$str .= 'API limit reached. Try again later.' . "\n";
+						$gotResults = false;
+					}
 				}
 
 			} catch (\Exception $e) {
