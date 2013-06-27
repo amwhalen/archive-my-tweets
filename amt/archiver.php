@@ -111,9 +111,12 @@ class Archiver {
 				if (isset($rate['remaining']) && isset($rate['limit'])) {
 					$str .= $rate['remaining'] . '/' . $rate['limit'] . "\n";
 					if ($rate['remaining'] <= 0) {
-						$str .= 'API limit reached. Try again later.' . "\n";
+						$str .= 'API limit reached for this hour. Try again later.' . "\n";
 						$gotResults = false;
 					}
+				} else {
+					$str .= 'Rate limit headers missing from response. Twitter may be having problems. Try again later.' . "\n";
+					$gotResults = false;
 				}
 
 			} catch (\Exception $e) {
