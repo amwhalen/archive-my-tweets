@@ -59,7 +59,7 @@
 							if ($twitterMonths !== false) {
 								$class = '';
 								foreach ($twitterMonths as $row) {
-									$class = ($monthly_archive && $archive_year==$row['y'] && $archive_month==$row['m']) ? 'here': '';
+									$class = (isset($monthly_archive) && $monthly_archive && $archive_year==$row['y'] && $archive_month==$row['m']) ? 'here': '';
 									$time = strtotime($row['y'].'-'.$row['m'].'-01');
 									$date = date('F Y', $time);
 									$url = $config['system']['baseUrl'].'archive/'.date('Y', $time).'/'.date('m', $time).'/';
@@ -84,7 +84,7 @@
 								$class = '';
 								foreach ($twitterClients as $row) {
 									$client_name = strip_tags($row['source']);
-									$class = ($per_client_archive && $client==$client_name) ? 'here': '';
+									$class = (isset($per_client_archive) && $per_client_archive && $client==$client_name) ? 'here': '';
 									$url = $config['system']['baseUrl'].'client/'.$client_name.'/';
 									$bg_percent = round($row['total'] / $maxClients * 100);
 									echo '<li class="'.$class.'"><a href="'.$url.'"><span class="month">'.$client_name.'</span><span class="total">'.$row['c'].'</span><span class="bar" style="width: '.$bg_percent.'%;"></span></a></li>';

@@ -455,6 +455,7 @@ class Twitter
 
         // split the response headers from the body
         list($responseHeaders, $response) = explode("\r\n\r\n", $response, 2);
+        error_log($responseHeaders);
 
         // set the latest rate limit status
         $rateLimitStatus = array();
@@ -462,14 +463,15 @@ class Twitter
             // skip the first line, it's the HTTP response code
             if ($i !== 0) {
                 list($key, $value) = explode(': ', $line);
-                switch ($key) {
-                    case "X-Rate-Limit-Limit":
+                error_log("$key: $value");
+                switch (strtolower($key)) {
+                    case "x-rate-limit-limit":
                         $rateLimitStatus['limit'] = $value;
                         break;
-                    case "X-Rate-Limit-Remaining":
+                    case "x-rate-limit-remaining":
                         $rateLimitStatus['remaining'] = $value;
                         break;
-                    case "X-Rate-Limit-Reset":
+                    case "x-rate-limit-reset":
                         $rateLimitStatus['reset'] = $value;
                         break;
                 }

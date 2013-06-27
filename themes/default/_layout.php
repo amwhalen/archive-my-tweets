@@ -22,7 +22,7 @@
 				<ul id="search-nav" class="nav pull-right">
 					<!--<li><a href="<?php echo $config['system']['baseUrl']; ?>stats">Stats</a></li>-->
 					<form action="<?php echo $config['system']['baseUrl']; ?>" class="navbar-search pull-right" method="get">
-						<input type="text" size="20" name="q" value="<?php echo ($search) ? htmlentities($searchTerm) : ''; ?>" class="span3 search-query" placeholder="Search my tweets" />
+						<input type="text" size="20" name="q" value="<?php echo (isset($search) && $search) ? htmlentities($searchTerm) : ''; ?>" class="span3 search-query" placeholder="Search my tweets" />
 					</form>
 				</ul>
 			</div>

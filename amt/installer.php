@@ -52,20 +52,20 @@ class Installer {
 		$this->data['timezones'] = $this->getTimeZones();
 
 		// form data
-		$this->data['form']['twitterUsername']  = ($_POST['twitterUsername']) ? $_POST['twitterUsername'] : '';
-		$this->data['form']['twitterName']      = ($_POST['twitterName']) ? $_POST['twitterName'] : '';
-		$this->data['form']['consumerKey']      = ($_POST['consumerKey']) ? $_POST['consumerKey'] : '';
-		$this->data['form']['consumerSecret']   = ($_POST['consumerSecret']) ? $_POST['consumerSecret'] : '';
-		$this->data['form']['oauthToken']       = ($_POST['oauthToken']) ? $_POST['oauthToken'] : '';
-		$this->data['form']['oauthSecret']      = ($_POST['oauthSecret']) ? $_POST['oauthSecret'] : '';
-		$this->data['form']['baseUrl']          = ($_POST['baseUrl']) ? $_POST['baseUrl'] : $this->guessBaseUrl();
-		$this->data['form']['timezone']         = ($_POST['timezone']) ? $_POST['timezone'] : 'America/New_York';
-		$this->data['form']['cronKey']          = ($_POST['cronKey']) ? $_POST['cronKey'] : '';
-		$this->data['form']['databaseHost']     = ($_POST['databaseHost']) ? $_POST['databaseHost'] : 'localhost';
-		$this->data['form']['databaseDatabase'] = ($_POST['databaseDatabase']) ? $_POST['databaseDatabase'] : '';
-		$this->data['form']['databaseUsername'] = ($_POST['databaseUsername']) ? $_POST['databaseUsername'] : '';
-		$this->data['form']['databasePassword'] = ($_POST['databasePassword']) ? $_POST['databasePassword'] : '';
-		$this->data['form']['databasePrefix']   = ($_POST['databasePrefix']) ? $_POST['databasePrefix'] : 'amt_';
+		$this->data['form']['twitterUsername']  = (isset($_POST['twitterUsername']) && $_POST['twitterUsername']) ? $_POST['twitterUsername'] : '';
+		$this->data['form']['twitterName']      = (isset($_POST['twitterName']) && $_POST['twitterName']) ? $_POST['twitterName'] : '';
+		$this->data['form']['consumerKey']      = (isset($_POST['consumerKey']) && $_POST['consumerKey']) ? $_POST['consumerKey'] : '';
+		$this->data['form']['consumerSecret']   = (isset($_POST['consumerSecret']) && $_POST['consumerSecret']) ? $_POST['consumerSecret'] : '';
+		$this->data['form']['oauthToken']       = (isset($_POST['oauthToken']) && $_POST['oauthToken']) ? $_POST['oauthToken'] : '';
+		$this->data['form']['oauthSecret']      = (isset($_POST['oauthSecret']) && $_POST['oauthSecret']) ? $_POST['oauthSecret'] : '';
+		$this->data['form']['baseUrl']          = (isset($_POST['baseUrl']) && $_POST['baseUrl']) ? $_POST['baseUrl'] : $this->guessBaseUrl();
+		$this->data['form']['timezone']         = (isset($_POST['timezone']) && $_POST['timezone']) ? $_POST['timezone'] : 'America/New_York';
+		$this->data['form']['cronKey']          = (isset($_POST['cronKey']) && $_POST['cronKey']) ? $_POST['cronKey'] : '';
+		$this->data['form']['databaseHost']     = (isset($_POST['databaseHost']) && $_POST['databaseHost']) ? $_POST['databaseHost'] : 'localhost';
+		$this->data['form']['databaseDatabase'] = (isset($_POST['databaseDatabase']) && $_POST['databaseDatabase']) ? $_POST['databaseDatabase'] : '';
+		$this->data['form']['databaseUsername'] = (isset($_POST['databaseUsername']) && $_POST['databaseUsername']) ? $_POST['databaseUsername'] : '';
+		$this->data['form']['databasePassword'] = (isset($_POST['databasePassword']) && $_POST['databasePassword']) ? $_POST['databasePassword'] : '';
+		$this->data['form']['databasePrefix']   = (isset($_POST['databasePrefix']) && $_POST['databasePrefix']) ? $_POST['databasePrefix'] : 'amt_';
 
 		// form submission
 		if (isset($_POST['installer'])) {
@@ -301,6 +301,11 @@ class Installer {
 		// Requirement: mod_rewrite
 		if (function_exists('apache_get_modules') && !in_array('mod_rewrite', apache_get_modules())) {
 			$problems['errors'][] = 'The Apache mod_rewrite module is required.';
+		}
+
+		// Requirement: cURL
+		if (!function_exists('curl_init')) {
+			$problems['errors'][] = 'The PHP cURL extension is required.';
 		}
 
 		// Requirement: writable config.php
