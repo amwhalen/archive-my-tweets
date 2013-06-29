@@ -3,7 +3,7 @@
 			<div class="span8">
 				<div id="tweets" class="rounded">
 					
-					<?php echo ($header) ? '<div class="page-header"><h1>'.$header.'</h1></div>': ''; ?>
+					<?php echo ($header) ? '<div class="page-header"><h1>'.htmlentities($header).'</h1></div>': ''; ?>
 
 					<?php
 					
