@@ -33,7 +33,7 @@ class Controller {
 		$this->data['header']              = '';
 		$perPage = 50;
 
-		$current_page = (isset($_GET['page'])) ? $_GET['page']: 1;
+		$current_page = (isset($_GET['page'])) ? htmlentities($_GET['page']) : 1;
 		$offset = ($current_page > 1) ? (($current_page-1) * $perPage) : 0;
 
 		// the big switch. this decides what to show on the page.
@@ -48,7 +48,7 @@ class Controller {
 		} else if (isset($_GET['q'])) {
 
 			// show search results
-			$searchTerm = $_GET['q'];
+			$searchTerm = htmlentities($_GET['q']);
 			$this->data['pageType'] = 'search';
 			$this->data['search'] = true;
 			$this->data['searchTerm'] = $searchTerm;
@@ -77,7 +77,7 @@ class Controller {
 			// show tweets from a specific client
 			$this->data['pageType'] = 'client_archive';
 			$this->data['per_client_archive'] = true;
-			$this->data['client'] = $_GET['client'];
+			$this->data['client'] = htmlentities($_GET['client']);
 			$this->data['tweets'] = $this->model->getTweetsByClient($this->data['client'], $offset, $perPage);
 			$this->data['totalTweetsByClient'] = $this->model->getTweetsByClientCount($this->data['client']);
 			$pageBaseUrl = $this->data['config']['system']['baseUrl'].'client/'.urlencode($this->data['client']).'/';
@@ -98,7 +98,7 @@ class Controller {
 		} else {
 		
 			// default view: show all the tweets
-			$this->data['pageType'] = 'recent';		
+			$this->data['pageType'] = 'recent';
 			$this->data['all_tweets'] = true;
 			$this->data['tweets'] = $this->model->getTweets($offset, $perPage);
 			$this->data['pagination'] = $this->paginator->paginate($this->data['config']['system']['baseUrl'], $this->data['totalTweets'], $current_page, $perPage);
