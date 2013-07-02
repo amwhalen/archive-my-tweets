@@ -33,21 +33,21 @@ class TweetTest extends \PHPUnit_Framework_TestCase {
 	public function testLinkedTweetWithUsername() {
 		$t = new Tweet();
 		$t->tweet = 'This is a tweet with a username @awhalen in it.';
-		$this->assertEquals('This is a tweet with a username <a href="http://twitter.com/awhalen">@awhalen</a> in it.', $t->get_linked_tweet());
+		$this->assertEquals('This is a tweet with a username <a href="https://twitter.com/awhalen">@awhalen</a> in it.', $t->get_linked_tweet());
 	}
 
 	// get_linked_tweet(hashtag)
 	public function testLinkedTweetWithHashTag() {
 		$t = new Tweet();
 		$t->tweet = 'This is a tweet with a hashtag #awesome in it.';
-		$this->assertEquals('This is a tweet with a hashtag <a href="http://search.twitter.com/search?q=%23awesome">#awesome</a> in it.', $t->get_linked_tweet());
+		$this->assertEquals('This is a tweet with a hashtag <a href="https://twitter.com/search?q=%23awesome">#awesome</a> in it.', $t->get_linked_tweet());
 	}
 
 	// all three links
 	public function testLinkedTweet() {
 		$t = new Tweet();
 		$t->tweet = '@awhalen check out http://amwhalen.com #awesome';
-		$this->assertEquals('<a href="http://twitter.com/awhalen">@awhalen</a> check out <a href="http://amwhalen.com">http://amwhalen.com</a> <a href="http://search.twitter.com/search?q=%23awesome">#awesome</a>', $t->get_linked_tweet());
+		$this->assertEquals('<a href="https://twitter.com/awhalen">@awhalen</a> check out <a href="http://amwhalen.com">http://amwhalen.com</a> <a href="https://twitter.com/search?q=%23awesome">#awesome</a>', $t->get_linked_tweet());
 	}
 
 	// load(array)
