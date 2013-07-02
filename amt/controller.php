@@ -30,6 +30,7 @@ class Controller {
 		$this->data['totalFavoriteTweets'] = $this->model->getTotalFavoriteTweets();
 		$this->data['totalClients']        = $this->model->getTotalClients();
 		$this->data['maxClients']          = $this->model->getMostPopularClientTotal();
+		$this->data['header']              = '';
 		$perPage = 50;
 
 		$current_page = (isset($_GET['page'])) ? $_GET['page']: 1;

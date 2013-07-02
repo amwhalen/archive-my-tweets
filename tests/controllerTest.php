@@ -10,6 +10,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase {
 	protected $paginator;
 	protected $latestTweet;
 	protected $recentTweets;
+	protected $fakeData;
 
 	public function setUp() {
 
@@ -55,9 +56,17 @@ class ControllerTest extends \PHPUnit_Framework_TestCase {
 		// clients
 		$this->model->expects($this->any())->method('getTwitterClients')->will($this->returnValue(array()));
 
+		// fake config data
+		$this->fakeData = array(
+			'config' => array(
+				'system' => array('baseUrl' => ''),
+				'twitter' => array('username' => 'fakeusername', 'name' => 'Fake Name')
+			)
+		);
+
 		$this->view = new View(dirname(__FILE__).'/../themes/default');
 		$this->paginator = new Paginator();
-		$this->controller = new Controller($this->model, $this->view, $this->paginator);
+		$this->controller = new Controller($this->model, $this->view, $this->paginator, $this->fakeData);
 
 	}
 
@@ -98,7 +107,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase {
 		$model->expects($this->at(7))->method('getSearchResults')->will($this->returnValue($this->recentTweets));
 		$model->expects($this->at(8))->method('getSearchResults')->will($this->returnValue(1));
 
-		$controller = new Controller($model, $this->view, $this->paginator);
+		$controller = new Controller($model, $this->view, $this->paginator, $this->fakeData);
 
 		ob_start();
 		$controller->index();

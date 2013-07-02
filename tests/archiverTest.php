@@ -278,7 +278,7 @@ class ArchiverTest extends \PHPUnit_Framework_TestCase {
 
 		$lotsOfTweets = array();
 		for ($i = 0; $i < 200; $i++) {
-			$lotsOfTweets[] = array();
+			$lotsOfTweets[] = array('id' => $i);
 		}
 
 		// Calling $twitter->statusesUserTimeline() will return an array the first time

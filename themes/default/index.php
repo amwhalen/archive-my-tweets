@@ -25,7 +25,7 @@
 								<?php echo $t->get_linked_tweet(); ?>
 							</p>
 							<p class="meta">
-								<a href="<?php echo ($single_tweet ? 'https://twitter.com/'.$config['twitter']['username'].'/status/' : $config['system']['baseUrl']).$t->id; ?>/" rel="bookmark"><?php echo $t->get_date(); ?></a>
+								<a href="<?php echo ((isset($single_tweet) && $single_tweet) ? 'https://twitter.com/'.$config['twitter']['username'].'/status/' : $config['system']['baseUrl']).$t->id; ?>/" rel="bookmark"><?php echo $t->get_date(); ?></a>
 								via
 								<?php echo $t->source; echo ($t->in_reply_to_status_id != 0) ? ' <a href="https://twitter.com/'.$t->in_reply_to_screen_name.'/status/'.$t->in_reply_to_status_id.'">in reply to '.$t->in_reply_to_screen_name.'</a>' : ''; ?>
 							</p>
@@ -50,8 +50,8 @@
 						
 					<div id="archive" class="widget rounded">
 						<ul class="links">
-							<li class="all-tweets <?php echo ($all_tweets) ? 'here' : ''; ?>"><a href="<?php echo $config['system']['baseUrl']; ?>"><span class="month">All Tweets</span><span class="total"><?php echo $totalTweets; ?></span><span class="bar"></span></a></li>
-							<li class="<?php echo ($favorite_tweets) ? 'here' : ''; ?>"><a href="<?php echo $config['system']['baseUrl']; ?>favorites"><span class="month">Favorites</span><span class="total"><?php echo $totalFavoriteTweets; ?></span><span class="bar"></span></a></li>
+							<li class="all-tweets <?php echo (isset($all_tweets) && $all_tweets) ? 'here' : ''; ?>"><a href="<?php echo $config['system']['baseUrl']; ?>"><span class="month">All Tweets</span><span class="total"><?php echo $totalTweets; ?></span><span class="bar"></span></a></li>
+							<li class="<?php echo (isset($favorite_tweets) && $favorite_tweets) ? 'here' : ''; ?>"><a href="<?php echo $config['system']['baseUrl']; ?>favorites"><span class="month">Favorites</span><span class="total"><?php echo $totalFavoriteTweets; ?></span><span class="bar"></span></a></li>
 							<?php
 							
 							// months

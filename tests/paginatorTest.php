@@ -13,7 +13,7 @@ class PaginatorTest extends \PHPUnit_Framework_TestCase {
 	public function testPaginationFirstPage() {
 
 		$paginator = new Paginator();
-		$output = $paginator->paginate($baseUrl, 500, 1, 100);
+		$output = $paginator->paginate($this->baseUrl, 500, 1, 100);
 
 		$this->assertTrue($this->didFindString($output, 'Older Tweets'));
 		$this->assertFalse($this->didFindString($output, 'Newer Tweets'));
@@ -23,7 +23,7 @@ class PaginatorTest extends \PHPUnit_Framework_TestCase {
 	public function testPaginationMiddlePage() {
 
 		$paginator = new Paginator();
-		$output = $paginator->paginate($baseUrl, 500, 3, 100);
+		$output = $paginator->paginate($this->baseUrl, 500, 3, 100);
 
 		$this->assertTrue($this->didFindString($output, 'Older Tweets'));
 		$this->assertTrue($this->didFindString($output, 'Newer Tweets'));
@@ -33,7 +33,7 @@ class PaginatorTest extends \PHPUnit_Framework_TestCase {
 	public function testPaginationLastPage() {
 
 		$paginator = new Paginator();
-		$output = $paginator->paginate($baseUrl, 500, 5, 100);
+		$output = $paginator->paginate($this->baseUrl, 500, 5, 100);
 
 		$this->assertFalse($this->didFindString($output, 'Older Tweets'));
 		$this->assertTrue($this->didFindString($output, 'Newer Tweets'));
@@ -43,7 +43,7 @@ class PaginatorTest extends \PHPUnit_Framework_TestCase {
 	public function testPaginationOnlyPage() {
 
 		$paginator = new Paginator();
-		$output = $paginator->paginate($baseUrl, 100, 1, 100);
+		$output = $paginator->paginate($this->baseUrl, 100, 1, 100);
 
 		$this->assertFalse($this->didFindString($output, 'Older Tweets'));
 		$this->assertFalse($this->didFindString($output, 'Newer Tweets'));
