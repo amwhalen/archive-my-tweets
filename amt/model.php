@@ -32,11 +32,51 @@ class Model {
 	/**
 	 * Gets a tweet by ID
 	 *
-	 * @return array|false Returns the tw recent tweet or false on failure.
+	 * @return array|false Returns the tweet with the given ID or false on failure.
 	 */
 	public function getTweet($id) {
 
 		$stmt = $this->db->prepare("select * from ".$this->table." where id=:id limit 1");
+		$stmt->bindValue(':id', $id, PDO::PARAM_INT);
+		$status = $stmt->execute();
+
+		if ($status && $stmt->rowCount()) {
+			return $stmt->fetch();
+		} else {
+			return false;
+		}
+
+	}
+
+	/**
+	 * Gets the tweet that was made before the given tweet ID
+	 * 
+	 * @param int $id The current tweet ID
+	 * @return array|false Returns the tweet that was made before the given tweet ID, or false if one was not found.
+	 */
+	public function getTweetBefore($id) {
+
+		$stmt = $this->db->prepare("select * from ".$this->table." where id < :id order by id desc limit 1");
+		$stmt->bindValue(':id', $id, PDO::PARAM_INT);
+		$status = $stmt->execute();
+
+		if ($status && $stmt->rowCount()) {
+			return $stmt->fetch();
+		} else {
+			return false;
+		}
+
+	}
+
+	/**
+	 * Gets the tweet that was made after the given tweet ID
+	 * 
+	 * @param int $id The current tweet ID
+	 * @return array|false Returns the tweet that was made after the given tweet ID, or false if one was not found.
+	 */
+	public function getTweetAfter($id) {
+
+		$stmt = $this->db->prepare("select * from ".$this->table." where id > :id order by id asc limit 1");
 		$stmt->bindValue(':id', $id, PDO::PARAM_INT);
 		$status = $stmt->execute();
 

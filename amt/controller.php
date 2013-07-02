@@ -31,6 +31,8 @@ class Controller {
 		$this->data['totalClients']        = $this->model->getTotalClients();
 		$this->data['maxClients']          = $this->model->getMostPopularClientTotal();
 		$this->data['header']              = '';
+		$this->data['prevTweet']           = null;
+		$this->data['nextTweet']           = null;
 		$perPage = 50;
 
 		$current_page = (isset($_GET['page'])) ? htmlentities($_GET['page']) : 1;
@@ -44,7 +46,22 @@ class Controller {
 			$this->data['single_tweet'] = true;
 			$this->data['tweets'] = array($this->model->getTweet($_GET['id']));
 			$this->data['header'] = '';
-		
+			$this->data['prevTweet'] = $this->model->getTweetBefore($_GET['id']);
+			$this->data['nextTweet'] = $this->model->getTweetAfter($_GET['id']);
+			if ($this->data['nextTweet'] || $this->data['prevTweet']) {
+				$pagination = '<div class="amt-pagination"><ul class="pager">';
+				if ($this->data['prevTweet']) {
+					$pagination .= '<li class="previous"><a href="'.$this->data['config']['system']['baseUrl'].$this->data['prevTweet']['id'].'/">&larr; Previous Tweet</a></li>';
+				}
+				if ($this->data['nextTweet']) {
+					$pagination .= '<li class="next"><a href="'.$this->data['config']['system']['baseUrl'].$this->data['nextTweet']['id'].'/">Next Tweet &rarr;</a></li>';
+				}
+				$pagination .= '</ul></div>';
+			} else {
+				$pagination = '';
+			}
+			$this->data['pagination'] = $pagination;
+
 		} else if (isset($_GET['q'])) {
 
 			// show search results
