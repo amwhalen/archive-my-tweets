@@ -65,7 +65,7 @@ class Controller {
 		} else if (isset($_GET['q'])) {
 
 			// show search results
-			$searchTerm = htmlentities($_GET['q']);
+			$searchTerm = str_replace('&quot;', '"', htmlentities($_GET['q']));
 			$this->data['pageType'] = 'search';
 			$this->data['search'] = true;
 			$this->data['searchTerm'] = $searchTerm;
