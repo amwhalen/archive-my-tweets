@@ -65,7 +65,7 @@ class Controller {
 		} else if (isset($_GET['q'])) {
 
 			// show search results
-			$searchTerm = str_replace('&quot;', '"', htmlentities($_GET['q']));
+			$searchTerm = str_replace('&quot;', '"', htmlspecialchars($_GET['q']));
 			$this->data['pageType'] = 'search';
 			$this->data['search'] = true;
 			$this->data['searchTerm'] = $searchTerm;
@@ -94,7 +94,7 @@ class Controller {
 			// show tweets from a specific client
 			$this->data['pageType'] = 'client_archive';
 			$this->data['per_client_archive'] = true;
-			$this->data['client'] = htmlentities($_GET['client']);
+			$this->data['client'] = htmlspecialchars($_GET['client']);
 			$this->data['tweets'] = $this->model->getTweetsByClient($this->data['client'], $offset, $perPage);
 			$this->data['totalTweetsByClient'] = $this->model->getTweetsByClientCount($this->data['client']);
 			$pageBaseUrl = $this->data['config']['system']['baseUrl'].'client/'.urlencode($this->data['client']).'/';
