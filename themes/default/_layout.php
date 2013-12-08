@@ -6,6 +6,7 @@
 	<title>@<?php echo $config['twitter']['username']; ?> - <?php echo $config['twitter']['name']; ?> - Tweets</title>
 	<link href="<?php echo $config['system']['baseUrl']; ?>css/archive.css" rel="stylesheet">
 	<link href="<?php echo $config['system']['baseUrl']; ?>assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+	<link href="<?php echo $config['system']['baseUrl']; ?>/?atom=1" rel="alternate" title="Tweets for <?php echo $config['twitter']['name']; ?>" type="application/atom+xml" />
 	<!--[if lt IE 9]>
 		<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
 	<![endif]-->
