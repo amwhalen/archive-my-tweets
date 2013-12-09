@@ -13,7 +13,7 @@ $s = empty($_SERVER["HTTPS"]) ? '' : ($_SERVER["HTTPS"] == "on") ? "s" : "";
 $protocol = strleft(strtolower($_SERVER["SERVER_PROTOCOL"]), "/").$s;
 $port = ($_SERVER["SERVER_PORT"] == "80") ? "" : (":".$_SERVER["SERVER_PORT"]);
 
-echo $protocol."://".$_SERVER['SERVER_NAME'].$port.$_SERVER['REQUEST_URI'];
+echo $protocol."://".$_SERVER['SERVER_NAME'].$port.str_replace('&', '&amp;', $_SERVER['REQUEST_URI']);
 
 ?>" />
 
