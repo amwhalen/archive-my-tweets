@@ -45,6 +45,9 @@ If you want to set up the cron job to run remotely, use this instead:
 The "secret" is so that only you can run the cron script instead of just any visitor. This will protect your Twitter API limit (350 requests per hour), which is tied to your username. If you don't have wget installed on your server, you could try to use cURL instead:
 
 	0 * * * * /usr/bin/env curl --silent --compressed http://example.com/tweets/cron.php?secret=MY_SECRET
+	
+You could also use webcron service (like http://www.easycron.com) for setting cron jobs up.
+
 
 
 Importing Your Official Twitter Archive
