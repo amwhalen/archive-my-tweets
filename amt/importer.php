@@ -76,6 +76,10 @@ class Importer {
 
         $tweets = array();
 
+        if (!file_exists($filename) || file_exists($filename) && !is_readable($filename)) {
+            return false;
+        }
+
         $jsonString = file_get_contents($filename);
         if ($jsonString === false) {
             return false;

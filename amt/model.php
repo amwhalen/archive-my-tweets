@@ -178,8 +178,8 @@ class Model {
     public function getFavoriteTweets($offset=0, $perPage=50) {
 
         $stmt = $this->db->prepare("select * from ".$this->table." where favorited=1 order by id desc limit :offset,:perPage");
-        $stmt->bindValue(':offset', (int) $offset, PDO::PARAM_INT);
-        $stmt->bindValue(':perPage', (int) $perPage, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+        $stmt->bindValue(':perPage', (int)$perPage, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll();
 
@@ -200,8 +200,8 @@ class Model {
     public function getTweetsByMonthCount($year, $month) {
 
         $stmt = $this->db->prepare('select count(*) as total from '.$this->table.' where year(created_at)=:year and month(created_at)=:month order by id desc');
-        $stmt->bindValue(':year', (int) $year, PDO::PARAM_INT);
-        $stmt->bindValue(':month', (int) $month, PDO::PARAM_INT);
+        $stmt->bindValue(':year', (int)$year, PDO::PARAM_INT);
+        $stmt->bindValue(':month', (int)$month, PDO::PARAM_INT);
         $stmt->execute();
         $row = $stmt->fetch();
         return $row['total'];
@@ -212,8 +212,8 @@ class Model {
 
         $stmt = $this->db->prepare('select * from '.$this->table.' where source REGEXP CONCAT("(<a.*>)?", :client, "(</a>)?") order by id desc limit :offset,:perPage');
         $stmt->bindValue(':client', $client, PDO::PARAM_STR);
-        $stmt->bindValue(':offset', (int) $offset, PDO::PARAM_INT);
-        $stmt->bindValue(':perPage', (int) $perPage, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+        $stmt->bindValue(':perPage', (int)$perPage, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll();
 
