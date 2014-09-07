@@ -18,6 +18,12 @@
     <log type="junit" target="build/logs/junit.xml" logIncompleteSkipped="false"/>
   </logging>
 
+  <filter>
+      <blacklist>
+            <directory>vendor</directory>
+      </blacklist>
+  </filter>
+
   <php>
     <includePath>amt</includePath>
   </php>
