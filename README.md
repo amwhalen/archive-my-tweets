@@ -18,6 +18,7 @@ Installation
 1. [Download the archive-my-tweets source code](https://github.com/amwhalen/archive-my-tweets/archive/master.zip), unzip it, and upload it into a directory on your LAMP web server (e.g. /tweets/).
 2. Visit the installation location in your web browser, e.g. http://www.example.com/tweets/.
 3. Fill out the form with your information and save. That's it!
+4. For users who do not use Apache, see the [wiki for url rewriting](https://github.com/amwhalen/archive-my-tweets/wiki/Advanced-configuration---installation#url-rewriting).
 
 
 Getting Twitter API Tokens
