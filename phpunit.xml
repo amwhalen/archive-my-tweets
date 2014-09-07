@@ -21,6 +21,7 @@
   <filter>
       <blacklist>
             <directory>vendor</directory>
+            <file>includes.php</file>
       </blacklist>
   </filter>
 
