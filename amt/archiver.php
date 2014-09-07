@@ -152,22 +152,24 @@ class Archiver {
     public function decrement64BitInteger($int) {
 
         if (PHP_INT_SIZE == 8) {
-            return (string) ((int)$int - 1);
+            return (string)((int)$int - 1);
         } else {
 
-            $str = (string) $int;
+            $str = (string)$int;
 
             // 1 and 0 are special cases with this method
-            if ($str == 1 || $str == 0) return (string) ($str - 1);
+            if ($str == 1 || $str == 0) {
+                return (string)($str - 1);
+            }
 
-                // Determine if number is negative
-                $negative = $str[0] == '-';
+            // Determine if number is negative
+            $negative = $str[0] == '-';
 
-                // Strip sign and leading zeros
-                $str = ltrim($str, '0-+');
+            // Strip sign and leading zeros
+            $str = ltrim($str, '0-+');
 
-                // Loop characters backwards
-                for ($i = strlen($str) - 1; $i >= 0; $i--) {
+            // Loop characters backwards
+            for ($i = strlen($str) - 1; $i >= 0; $i--) {
 
                 if ($negative) { // Handle negative numbers
 

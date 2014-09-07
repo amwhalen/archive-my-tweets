@@ -76,7 +76,7 @@ class Importer {
 
         $tweets = array();
 
-        $jsonString = @file_get_contents($filename);
+        $jsonString = file_get_contents($filename);
         if ($jsonString === false) {
             return false;
         }
