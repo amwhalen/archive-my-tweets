@@ -34,30 +34,22 @@ class ViewTest extends \PHPUnit_Framework_TestCase {
 
 	/**
 	 * Test bad directory exception
+	 * @expectedException Exception
 	 */
-	public function testDirectoryException() {		
+	public function testDirectoryException() {
 
-		try {
-			$view = new View($this->templateDirectory.'/not_a_real_directory');
-		} catch (\Exception $e) {
-			return;
-		}
-		$this->fail('An expected exception has not been raised.');
+		$view = new View($this->templateDirectory.'/not_a_real_directory');
 
 	}
 
 	/**
 	 * Test bad template exception
+	 * @expectedException Exception
 	 */
-	public function testTemplateException() {		
+	public function testTemplateException() {
 
-		try {
-			$view = new View($this->templateDirectory);
-			$view->render($this->templateDirectory.'/not_a_real_template.php');
-		} catch (\Exception $e) {
-			return;
-		}
-		$this->fail('An expected exception has not been raised.');
+		$view = new View($this->templateDirectory);
+		$view->render($this->templateDirectory.'/not_a_real_template.php');
 
 	}
 

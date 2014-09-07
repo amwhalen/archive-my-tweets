@@ -40,7 +40,7 @@ class Controller {
 
 		// the big switch. this decides what to show on the page.
 		if (isset($_GET['id'])) {
-		
+
 			// show a single tweet
 			$this->data['pageType'] = 'single';
 			$this->data['single_tweet'] = true;
@@ -75,9 +75,9 @@ class Controller {
 			$this->data['pagination'] = $this->paginator->paginate($pageBaseUrl, $this->data['totalTweetsForSearch'], $current_page, $perPage, false);
 			$header = 'Search <small>'.$searchTerm.'</small>';
 			$this->data['header'] = $header;
-		
+
 		} else if (isset($_GET['year']) && isset($_GET['month'])) {
-		
+
 			// show tweets from a specific month
 			$this->data['pageType'] = 'month';
 			$this->data['monthly_archive'] = true;
@@ -88,9 +88,9 @@ class Controller {
 			$pageBaseUrl = $this->data['config']['system']['baseUrl'].'archive/'.urlencode($this->data['archive_year']).'/'.urlencode($this->data['archive_month']).'/';
 			$this->data['pagination'] = $this->paginator->paginate($pageBaseUrl, $this->data['totalTweetsByMonth'], $current_page, $perPage);
 			$this->data['header'] = date('F Y', strtotime($this->data['archive_year'].'-'.$this->data['archive_month'].'-01'));
-		
+
 		} else if (isset($_GET['client'])) {
-		
+
 			// show tweets from a specific client
 			$this->data['pageType'] = 'client_archive';
 			$this->data['per_client_archive'] = true;
@@ -102,7 +102,7 @@ class Controller {
 			$this->data['header'] .= 'Tweets from '.$this->data['client'];
 
 		} else if (isset($_GET['favorites'])) {
-		
+
 			// show only favorite tweets
 			$this->data['pageType'] = 'favorites';
 			$this->data['favorite_tweets'] = true;
@@ -113,14 +113,14 @@ class Controller {
 			$this->data['header'] .= 'Favorite Tweets';
 
 		} else {
-		
+
 			// default view: show all the tweets
 			$this->data['pageType'] = 'recent';
 			$this->data['all_tweets'] = true;
 			$this->data['tweets'] = $this->model->getTweets($offset, $perPage);
 			$this->data['pagination'] = $this->paginator->paginate($this->data['config']['system']['baseUrl'], $this->data['totalTweets'], $current_page, $perPage);
 			$this->data['header'] = ($offset != 0) ? 'Recent Tweets <small>Page '.$current_page.'</small>' : 'Recent Tweets';
-		
+
 		}
 
 		// render index template

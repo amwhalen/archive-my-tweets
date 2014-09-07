@@ -4,3 +4,11 @@ config.php
 *.swo
 *.swp
 coverage
+build/coverage
+build/coverage/*
+build/logs
+build/api
+build/pdepend
+build/phpdox
+build/build
+cache.properties

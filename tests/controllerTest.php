@@ -98,6 +98,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase {
 	public function testSearch() {
 
 		// preconditions
+		$_GET = array();
 		$_GET['q'] = 'aardvark';
 
 		$model = $this->model;
@@ -120,6 +121,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase {
 	public function testMonth() {
 
 		// preconditions
+		$_GET = array();
 		$_GET['year'] = '2013';
 		$_GET['month'] = '01';
 
@@ -134,6 +136,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase {
 	public function testClient() {
 
 		// preconditions
+		$_GET = array();
 		$_GET['client'] = 'web';
 
 		ob_start();
@@ -147,6 +150,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase {
 	public function testFavorites() {
 
 		// preconditions
+		$_GET = array();
 		$_GET['favorites'] = '1';
 
 		ob_start();
