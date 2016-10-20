@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/amwhalen/archive-my-tweets.svg)](https://travis-ci.org/amwhalen/archive-my-tweets)
+
 Archive My Tweets
 =================
 
