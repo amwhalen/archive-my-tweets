@@ -231,7 +231,7 @@ class Model {
 
     public function getTwitterMonths() {
 
-        $stmt = $this->db->prepare('select year(created_at) as y, month(created_at) as m, count(*) AS total FROM '.$this->table.' GROUP BY year(created_at),month(created_at) order by created_at desc');
+        $stmt = $this->db->prepare('select year(created_at) as y, month(created_at) as m, count(*) AS total FROM '.$this->table.' GROUP BY y,m order by y desc, m desc');
         $stmt->execute();
         return $stmt->fetchAll();
 
@@ -239,7 +239,7 @@ class Model {
 
     public function getMostTweetsInAMonth() {
 
-        $stmt = $this->db->prepare('select year(created_at) as y, month(created_at) as m, count(*) AS total FROM '.$this->table.' GROUP BY year(created_at),month(created_at) order by total desc limit 1');
+        $stmt = $this->db->prepare('select year(created_at) as y, month(created_at) as m, count(*) AS total FROM '.$this->table.' GROUP BY y,m order by total desc limit 1');
         $stmt->execute();
         $row = $stmt->fetch();
         return $row['total'];
