@@ -1,4 +1,5 @@
 RewriteEngine on
+RewriteBase /
 
 # Single Tweet
 RewriteRule ^([0-9]+)/?$ index.php?id=$1 [L]
